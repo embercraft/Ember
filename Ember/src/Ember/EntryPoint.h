@@ -7,12 +7,12 @@
     int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
     {
         Ember::Log::Init();
-        EMBER_CORE_WARN("Initialized Log!");
+        EMBER_CORE_TRACE("Initialized Log!");
         EMBER_INFO("Initialized Log!");
         auto app = Ember::CreateApplication();
-        EMBER_INFO("Initialized Log!");
-        app->Run();
-        EMBER_INFO("Initialized Log!");
+        EMBER_WARN("Initialized Log!");
+        app->Run();                         // Infinite loop
+        EMBER_ERROR("Initialized Log!");     // This line will never be reached
         delete app;
         return 0;
     }

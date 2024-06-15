@@ -5,7 +5,8 @@
 #include <string>
 #include <functional>
 
-namespace Ember {
+namespace Ember 
+{
 
     enum class EventType
     {

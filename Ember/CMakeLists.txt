@@ -22,7 +22,11 @@ target_include_directories(Ember
 )
 
 # Define preprocessor definitions
-target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_LINUX EMBER_BUILD_SHARED)
+if(UNIX AND NOT APPLE)
+    target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_LINUX EMBER_BUILD_SHARED)
+elseif(WIN32)
+    target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_WINDOWS EMBER_BUILD_SHARED)
+endif()
 
 # Link spdlog to Ember
 target_link_libraries(Ember PRIVATE spdlog)

@@ -1,5 +1,2 @@
-# Ignore the following directories
-build/
-.vscode/
-.idea/
-cmake-build-debug/
+# Ignore the following folders
+build
