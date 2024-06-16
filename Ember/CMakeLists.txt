@@ -17,12 +17,14 @@ endif()
 
 # Add subdirectory for spdlog
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/spdlog)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/GLFW)
 
 # Include directories
 target_include_directories(Ember
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/spdlog/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/GLFW/include
 )
 
 # Define preprocessor definitions

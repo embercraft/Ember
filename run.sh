@@ -44,9 +44,11 @@ done
 echo -e "\033[34mBuilding in $BUILD_TYPE mode...\033[0m"
 
 # Remove existing build directory if it exists and the clean flag is set
-if [ "$CLEAN" = true ] && [ -d "build" ]; then
-    rm -rf build
+if [ "$CLEAN" = true ]; then
     echo -e "\033[34mDoing a Clean Build.\033[0m"
+    if [ -d "build" ]; then
+        rm -rf build
+    fi
 fi
 
 # Generate Makefiles and build the project with the specified build type
