@@ -12,6 +12,7 @@ TIMED_RUN=false
 DELETE_BUILD=false
 GPU=false
 CLEAN=false
+SHARED=false
 
 # Parse arguments
 for arg in "$@"; do
@@ -34,6 +35,9 @@ for arg in "$@"; do
         ("c")
             CLEAN=true
             ;;
+        ("s")
+            SHARED=true
+            ;;
     esac
 done
 
@@ -46,7 +50,12 @@ if [ "$CLEAN" = true ] && [ -d "build" ]; then
 fi
 
 # Generate Makefiles and build the project with the specified build type
-cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -S . -B build/
+if [ "$SHARED" = true ]; then
+    echo -e "\033[34mBuilding shared libraries...\033[0m"
+    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS=ON
+else
+    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
+fi
 
 # Build the project
 cmake --build build/

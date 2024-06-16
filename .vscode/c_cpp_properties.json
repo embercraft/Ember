@@ -7,7 +7,7 @@
             ],
             "defines": [
                 "EMBER_PLATFORM_LINUX",
-                "EMBER_BUILD_SHARED"
+                "EMBER_BUILD_LIB"
             ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
@@ -34,7 +34,7 @@
             ],
             "defines": [
                 "EMBER_PLATFORM_WINDOWS",
-                "EMBER_BUILD_SHARED"
+                "EMBER_BUILD_LIB"
             ],
             "compilerPath": "C:\\path\\to\\your\\clang.exe",
             "cStandard": "c17",

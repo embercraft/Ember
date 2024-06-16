@@ -9,7 +9,11 @@ file(GLOB_RECURSE EMBER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Ember/*.cpp")
 file(GLOB_RECURSE EMBER_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/Ember/*.h")
 
 # Create library
-add_library(Ember STATIC ${EMBER_SOURCES} ${EMBER_HEADERS})
+if(BUILD_SHARED_LIBS)
+    add_library(Ember SHARED ${EMBER_SOURCES} ${EMBER_HEADERS})
+else()
+    add_library(Ember STATIC ${EMBER_SOURCES} ${EMBER_HEADERS})
+endif()
 
 # Add subdirectory for spdlog
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/spdlog)
@@ -23,9 +27,9 @@ target_include_directories(Ember
 
 # Define preprocessor definitions
 if(UNIX AND NOT APPLE)
-    target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_LINUX EMBER_BUILD_SHARED)
+    target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_LINUX EMBER_BUILD_LIB)
 elseif(WIN32)
-    target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_WINDOWS EMBER_BUILD_SHARED)
+    target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_WINDOWS EMBER_BUILD_LIB)
 endif()
 
 # Link spdlog to Ember
