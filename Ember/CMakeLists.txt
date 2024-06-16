@@ -35,5 +35,8 @@ endif()
 # Link spdlog to Ember
 target_link_libraries(Ember PRIVATE spdlog)
 
+# Precompiled headers
+target_precompile_headers(Ember PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Emberpch.h)
+
 # Set C++ standard
 target_compile_features(Ember PUBLIC cxx_std_17)
