@@ -9,7 +9,6 @@ cd "$SCRIPT_DIR" || { echo -e "\033[31mFailed to navigate to the script director
 # Initialize variables
 BUILD_TYPE="Debug"
 TIMED_RUN=false
-DELETE_BUILD=false
 GPU=false
 CLEAN=false
 SHARED="STATIC"
@@ -24,9 +23,6 @@ for arg in "$@"; do
             ;;
         ("t")
             TIMED_RUN=true
-            ;;
-        ("b")
-            DELETE_BUILD=true
             ;;
         ("g")
             GPU=true
