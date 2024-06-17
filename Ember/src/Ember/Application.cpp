@@ -48,7 +48,7 @@ namespace Ember
 		}
 	}
 
-	bool Application::onWindowClose(WindowCloseEvent &e)
+	bool Application::onWindowClose([[maybe_unused]] WindowCloseEvent &e)
 	{
 		m_Running = false;
 		return true;

@@ -55,10 +55,10 @@ namespace Ember {
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-			data.Width = width;
-			data.Height = height;
+			data.Width = (uint)width;
+			data.Height = (uint)height;
 
-			WindowResizeEvent event(width, height);
+			WindowResizeEvent event((uint)width, (uint)height);
 			data.EventCallback(event);
 		});
 
@@ -69,7 +69,7 @@ namespace Ember {
 			data.EventCallback(event);
 		});
 
-		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, [[maybe_unused]] int scancode, int action, [[maybe_unused]] int mods)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
@@ -96,7 +96,7 @@ namespace Ember {
 			}
 		});
 
-		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods){
+		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, [[maybe_unused]] int mods){
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			switch(action)

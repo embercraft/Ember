@@ -18,22 +18,27 @@ add_subdirectory(Ember)
 add_subdirectory(Sandbox)
 
 # Set common compile options
-add_compile_options(
+function(set_common_compile_options target)
+    target_compile_options(${target} PRIVATE
         $<$<CONFIG:DEBUG>:
-        -O0
-        -g
-        -Wall
-        -Wextra
-        -pedantic
-        -Wshadow
-        -Wconversion
-        -Wsign-conversion
-        -Wunreachable-code
+            -O0
+            -g
+            -Wall
+            -Wextra
+            -pedantic
+            -Wshadow
+            -Wconversion
+            -Wsign-conversion
+            -Wunreachable-code
         >
         $<$<CONFIG:RELEASE>:
-        -O3
-        -Wall
-        -Wextra
-        -pedantic
+            -O3
+            -Wall
+            -Wextra
+            -pedantic
         >
-)
+    )
+endfunction()
+
+set_common_compile_options(Sandbox)
+set_common_compile_options(Ember)
