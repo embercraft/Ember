@@ -1,20 +1,31 @@
 #include "Emberpch.h"
 #include "Application.h"
 
-#include "Ember/Events/ApplicationEvent.h"
 #include "Ember/Log.h"
 
 #include <GLFW/glfw3.h>
+
+#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 namespace Ember
 {
 	Application::Application()
 	{
 		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 	}
 
 	Application::~Application()
 	{
+
+	}
+
+    void Application::OnEvent(Event &e)
+    {
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(onWindowClose));
+
+		EMBER_CORE_TRACE("{0}", e);
 	}
 
 	void Application::Run()
@@ -32,13 +43,14 @@ namespace Ember
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			glfwPollEvents();
-			// close window when close button is clicked
-			if (m_Window->ShouldClose())
-			{
-				m_Running = false;
-			}
 
 			m_Window->OnUpdate();
 		}
+	}
+
+	bool Application::onWindowClose(WindowCloseEvent &e)
+	{
+		m_Running = false;
+		return true;
 	}
 }

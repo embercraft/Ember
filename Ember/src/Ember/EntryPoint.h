@@ -11,8 +11,8 @@
         EMBER_INFO("Initialized Log!");
         auto app = Ember::CreateApplication();
         EMBER_WARN("Initialized Log!");
-        app->Run();                         // Infinite loop
-        EMBER_ERROR("Initialized Log!");     // This line will never be reached
+        app->Run();
+        EMBER_ERROR("Application Closed");
         delete app;
         return 0;
     }
