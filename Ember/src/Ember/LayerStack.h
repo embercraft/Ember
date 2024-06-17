@@ -3,6 +3,8 @@
 #include "Ember/Core.h"
 #include "Ember/Layer.h"
 
+#include <vector>
+
 namespace Ember
 {
     class EMBER_API LayerStack

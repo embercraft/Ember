@@ -3,7 +3,7 @@
 
 #include "Ember/Log.h"
 
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
@@ -46,14 +46,7 @@ namespace Ember
 	}
 
 	void Application::Run()
-	{
-		// Get GLFW version information
-    	int major, minor, revision;
-    	glfwGetVersion(&major, &minor, &revision);
-
-    	// Print GLFW version
-    	EMBER_CORE_WARN("GLFW version: {0}.{1}.{2}", major, minor, revision);
-        
+	{        
 		while(m_Running)
 		{
 			glClearColor(0.07f, 0.13f, 0.17f, 1.0f);

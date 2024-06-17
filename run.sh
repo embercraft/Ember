@@ -12,7 +12,7 @@ TIMED_RUN=false
 GPU=false
 CLEAN=false
 SHARED="SHARED"
-EXECUTABLE="./build/Sandbox/Sandbox"
+EXECUTABLE="./build/$BUILD_TYPE-$SHARED/Sandbox/Sandbox"
 ASSERTS="ON"
 
 # Parse arguments
@@ -54,15 +54,12 @@ if [ "$CLEAN" = true ]; then
     fi
 fi
 
-# Set Flags
-if [ "$SHARED" = "SHARED" ]; then
-    SHARED="ON"
-else
-    SHARED="OFF"
-fi
-
 # Create build directory
-cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="$SHARED" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
+if [ "$SHARED" = "SHARED" ]; then
+    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
+else
+    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="OFF" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
+fi
 
 # Build the project
 cmake --build build/ || exit $?

@@ -11,6 +11,13 @@ file(GLOB_RECURSE SANDBOX_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE
 # Create executable
 add_executable(Sandbox ${SANDBOX_SOURCES})
 
+# Set Output directory
+set_target_properties(Sandbox PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/Sandbox/
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Sandbox/
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Sandbox/
+)
+
 # Link Ember library
 target_link_libraries(Sandbox PRIVATE Ember)
 
