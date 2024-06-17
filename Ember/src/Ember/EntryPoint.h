@@ -10,7 +10,6 @@
         EMBER_CORE_TRACE("Initialized Log!");
         EMBER_INFO("Initialized Log!");
         auto app = Ember::CreateApplication();
-        EMBER_WARN("Initialized Log!");
         app->Run();
         EMBER_ERROR("Application Closed");
         delete app;

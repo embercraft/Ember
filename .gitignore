@@ -1,2 +1,7 @@
 # Ignore the following folders
 build
+.vscode
+!.vscode/c_cpp_properties.json
+.idea
+cmake-build-debug
+cmake-build-release

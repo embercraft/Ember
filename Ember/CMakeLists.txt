@@ -6,6 +6,10 @@ project(Ember CXX)
 
 # Define options
 option(EMBER_ENABLE_ASSERTS "Enable Debugging Assertions" OFF)
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+
+# Set GLFW options before adding the subdirectory
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build the GLFW documentation")
 
 # Define library sources
 file(GLOB_RECURSE EMBER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Ember/*.cpp")

@@ -11,7 +11,7 @@ BUILD_TYPE="Debug"
 TIMED_RUN=false
 GPU=false
 CLEAN=false
-SHARED="STATIC"
+SHARED="SHARED"
 EXECUTABLE="./build/Sandbox/Sandbox"
 ASSERTS="ON"
 
@@ -31,7 +31,7 @@ for arg in "$@"; do
             CLEAN=true
             ;;
         ("s")
-            SHARED="SHARED"
+            SHARED="STATIC"
             ;;
         ("a")
             ASSERTS="OFF"
