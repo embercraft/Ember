@@ -26,7 +26,7 @@ endif()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/spdlog)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/GLFW)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Glad)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui)
 
 # Include directories
 target_include_directories(Ember
@@ -67,14 +67,12 @@ set_target_properties(Glad
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GLAD/
 )
 
-#[===[]===[]===[]===[]===[]===[]===[]
 set_target_properties(ImGui 
         PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/ImGui/
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ImGui/
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ImGui/
 )
-]===[]===[]===[]===[]===[]===[]===[]===]
 
 # Find Packages
 find_package(OpenGL REQUIRED)
@@ -93,7 +91,7 @@ if(EMBER_ENABLE_ASSERTS)
 endif()
 
 # Link Libraries
-target_link_libraries(Ember PRIVATE spdlog glfw dl pthread OpenGL::GL Glad) # ImGui)
+target_link_libraries(Ember PRIVATE spdlog glfw dl pthread OpenGL::GL Glad ImGui)
 
 # Precompiled headers
 target_precompile_headers(Ember PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Emberpch.h)

@@ -5,3 +5,6 @@
 [submodule "Ember/Vendor/GLFW"]
 	path = Ember/Vendor/GLFW
 	url = https://github.com/glfw/glfw.git
+[submodule "Ember/Vendor/ImGui"]
+	path = Ember/Vendor/ImGui
+	url = https://github.com/rakshitx1/imgui

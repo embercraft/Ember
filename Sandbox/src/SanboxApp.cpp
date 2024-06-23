@@ -26,6 +26,7 @@ class Sandbox : public Ember::Application
 	Sandbox()
 	{
 		PushLayer(new ExampleLayer());
+		PushOverlay(new Ember::ImGuiLayer());
 	}
 
 	~Sandbox()
