@@ -18,8 +18,8 @@ set_target_properties(Sandbox PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Sandbox/
 )
 
-# Link Ember library
-target_link_libraries(Sandbox PRIVATE Ember)
+# Link Ember and glm libraries
+target_link_libraries(Sandbox PRIVATE Ember glm)
 
 # Include directories
 target_include_directories(Sandbox

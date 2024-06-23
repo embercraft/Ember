@@ -8,3 +8,6 @@
 [submodule "Ember/Vendor/ImGui"]
 	path = Ember/Vendor/ImGui
 	url = https://github.com/rakshitx1/imgui
+[submodule "Ember/Vendor/glm"]
+	path = Ember/Vendor/glm
+	url = https://github.com/g-truc/glm
