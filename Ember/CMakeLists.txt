@@ -26,6 +26,7 @@ endif()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/spdlog)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/GLFW)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Glad)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui)
 
 # Include directories
 target_include_directories(Ember
@@ -34,32 +35,46 @@ target_include_directories(Ember
         ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/spdlog/include
         ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/GLFW/include
         ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Glad/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui
 )
 
 # Set output directories
-set_target_properties(Ember PROPERTIES
+set_target_properties(Ember 
+        PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/Ember/
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Ember/
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Ember/
 )
 
-set_target_properties(spdlog PROPERTIES
+set_target_properties(spdlog 
+        PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/spdlog/
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/spdlog/
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/spdlog/
 )
 
-set_target_properties(glfw PROPERTIES
+set_target_properties(glfw 
+        PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/GLFW/
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/GLFW/
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GLFW/
 )
 
-set_target_properties(Glad PROPERTIES
+set_target_properties(Glad 
+        PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/GLAD/
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/GLAD/
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GLAD/
 )
+
+#[===[]===[]===[]===[]===[]===[]===[]
+set_target_properties(ImGui 
+        PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/ImGui/
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ImGui/
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ImGui/
+)
+]===[]===[]===[]===[]===[]===[]===[]===]
 
 # Find Packages
 find_package(OpenGL REQUIRED)
@@ -78,7 +93,7 @@ if(EMBER_ENABLE_ASSERTS)
 endif()
 
 # Link Libraries
-target_link_libraries(Ember PRIVATE spdlog glfw dl pthread OpenGL::GL Glad)
+target_link_libraries(Ember PRIVATE spdlog glfw dl pthread OpenGL::GL Glad) # ImGui)
 
 # Precompiled headers
 target_precompile_headers(Ember PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Emberpch.h)
