@@ -167,5 +167,4 @@ namespace Ember {
 	{
 		return m_Data.VSync;
 	}
-
 }

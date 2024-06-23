@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Setting up trap to handle exit status
+trap 'EXIT_STATUS=$?; if [ $EXIT_STATUS -eq 0 ]; then echo -e "\033[32mProgram exited successfully.\033[0m"; else echo -e "\033[31mProgram exited with status $EXIT_STATUS.\033[0m"; fi' EXIT
+
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -80,12 +83,4 @@ if [ "$TIMED_RUN" = true ]; then
     time "$EXECUTABLE"
 else
     "$EXECUTABLE"
-fi
-
-# Handle exit status
-EXIT_STATUS=$?
-if [ $EXIT_STATUS -eq 0 ]; then
-    echo -e "\033[32mProgram exited successfully.\033[0m"
-else
-    echo -e "\033[31mProgram exited with status $EXIT_STATUS.\033[0m"
 fi

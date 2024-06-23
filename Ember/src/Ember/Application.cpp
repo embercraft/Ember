@@ -3,7 +3,9 @@
 
 #include "Ember/Log.h"
 
-#include <glad/glad.h>
+#include "glad/glad.h"
+
+#include "Input.h"
 
 namespace Ember
 {
@@ -63,6 +65,10 @@ namespace Ember
 			{
 				layer->OnUpdate();
 			}
+
+			auto [x, y] = Input::GetMousePosition();
+
+			EMBER_CORE_TRACE("{0}, {1}", x, y);
 
 			m_Window->OnUpdate();
 		}
