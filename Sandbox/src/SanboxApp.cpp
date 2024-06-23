@@ -1,4 +1,3 @@
-#include "Emberpch.h"
 #include "Ember.h"
 
 class ExampleLayer : public Ember::Layer
@@ -11,12 +10,15 @@ class ExampleLayer : public Ember::Layer
 
 	void OnUpdate() override
 	{
-		EMBER_INFO("ExampleLayer::Update");
 	}
 
 	void OnEvent(Ember::Event& event) override
 	{
-		EMBER_TRACE("{0}", event);
+		if (event.GetEventType() == Ember::EventType::KeyPressed)
+		{
+			Ember::KeyPressedEvent& e = (Ember::KeyPressedEvent&)event;
+			EMBER_TRACE("{0}", (char)e.GetKeyCode());
+		}
 	}
 };
 
