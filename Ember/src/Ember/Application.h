@@ -6,6 +6,8 @@
 #include "Events/Event.h"
 #include "Ember/Events/ApplicationEvent.h"
 
+#include "Ember/ImGui/ImGuiLayer.h"
+
 namespace Ember
 {
 	class EMBER_API Application
@@ -32,6 +34,7 @@ namespace Ember
 		bool onWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
