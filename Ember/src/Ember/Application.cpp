@@ -58,7 +58,7 @@ namespace Ember
 	}
 
 	void Application::Run()
-	{        
+	{
 		while(m_Running)
 		{
 			glClearColor(0.07f, 0.13f, 0.17f, 1.0f);

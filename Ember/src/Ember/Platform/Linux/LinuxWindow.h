@@ -4,6 +4,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Ember/Renderer/GraphicsContext.h"
+
 namespace Ember {
 
 	class LinuxWindow : public Window
@@ -29,6 +31,7 @@ namespace Ember {
 		virtual void Shutdown();
 
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{
