@@ -9,6 +9,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# Check and print clang version
+find_program(CLANG_EXECUTABLE clang)
+if(CLANG_EXECUTABLE)
+    execute_process(
+        COMMAND ${CLANG_EXECUTABLE} --version
+        OUTPUT_VARIABLE CLANG_VERSION_OUTPUT
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Clang version: ${CLANG_VERSION_OUTPUT}")
+else()
+    message(WARNING "Clang not found. Unable to determine version.")
+endif()
+
 # Print the C++ and C standard versions
 message(STATUS "Using C++ standard version ${CMAKE_CXX_STANDARD}")
 message(STATUS "Using C standard version ${CMAKE_C_STANDARD}")
