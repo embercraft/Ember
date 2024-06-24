@@ -1,5 +1,7 @@
 #include "Ember.h"
 
+#include "imgui.h"
+
 class ExampleLayer : public Ember::Layer
 {
 	public:
@@ -10,6 +12,13 @@ class ExampleLayer : public Ember::Layer
 
 	void OnUpdate() override
 	{
+	}
+
+	virtual void OnImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello World");
+		ImGui::End();
 	}
 
 	void OnEvent(Ember::Event& event) override

@@ -15,7 +15,6 @@ TIMED_RUN=false
 GPU=false
 CLEAN=false
 SHARED="SHARED"
-EXECUTABLE="./build/$BUILD_TYPE-$SHARED/Sandbox/Sandbox"
 ASSERTS="ON"
 
 # Parse arguments
@@ -43,12 +42,18 @@ for arg in "$@"; do
 done
 
 # Print properties
+echo " "
+echo -e "\033[34m#############################################\033[0m"
 echo -e "\033[34mRunning with the following properties:\033[0m"
 echo -e "\033[34mBuild Type: $BUILD_TYPE\033[0m"
 echo -e "\033[34mClean Build: $CLEAN\033[0m"
 echo -e "\033[34mLibrary Type (Shared/Static): $SHARED\033[0m"
 echo -e "\033[34mGPU Support: $GPU\033[0m"
 echo -e "\033[34m#############################################\033[0m"
+echo " "
+
+# Set the executable path based on the build type
+EXECUTABLE="./build/$BUILD_TYPE-$SHARED/Sandbox/Sandbox"
 
 # Remove existing build directory if it exists and the clean flag is set
 if [ "$CLEAN" = true ]; then
