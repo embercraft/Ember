@@ -3,6 +3,8 @@
 #include "Ember/Core.h"
 #include "Ember/Events/Event.h"
 
+#include <string>
+
 namespace Ember
 {
     class EMBER_API Layer
