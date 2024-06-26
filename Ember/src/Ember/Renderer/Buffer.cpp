@@ -3,7 +3,7 @@
 
 #include "Renderer.h"
 
-#include "Ember/Platform/OpenGL/OpenGLBuffer.h"
+#include "Platform/OpenGL/OpenGLBuffer.h"
 
 namespace Ember {
     

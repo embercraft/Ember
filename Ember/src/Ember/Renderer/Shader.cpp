@@ -1,7 +1,7 @@
 #include "Emberpch.h"
 #include "Shader.h"
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 namespace Ember {
     Shader::Shader(const std::string &vertexSrc, const std::string &fragmentSrc)

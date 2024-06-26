@@ -5,7 +5,7 @@
 #include "Ember/Events/MouseEvent.h"
 #include "Ember/Events/KeyEvent.h"
 
-#include "Ember/Platform/OpenGL/OpenGLContext.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Ember {
 	

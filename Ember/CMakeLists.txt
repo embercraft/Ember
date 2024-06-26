@@ -12,8 +12,8 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build the GLFW documentation")
 
 # Define library sources
-file(GLOB_RECURSE EMBER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Ember/*.cpp")
-file(GLOB_RECURSE EMBER_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/Ember/*.h")
+file(GLOB_RECURSE EMBER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE EMBER_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 
 # Create library
 if(BUILD_SHARED_LIBS)

@@ -2,7 +2,7 @@
 #include "LinuxInput.h"
 
 #include "Ember/Application.h"
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 
 namespace Ember
 {
