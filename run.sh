@@ -14,7 +14,7 @@ BUILD_TYPE="Debug"
 TIMED_RUN=false
 GPU=false
 CLEAN=false
-SHARED="SHARED"
+LIBRARY_TYPE="STATIC"
 ASSERTS="ON"
 
 # Parse arguments
@@ -33,7 +33,7 @@ for arg in "$@"; do
             CLEAN=true
             ;;
         ("s")
-            SHARED="STATIC"
+            LIBRARY_TYPE="SHARED"
             ;;
         ("a")
             ASSERTS="OFF"
@@ -47,13 +47,13 @@ echo -e "\033[34m#############################################\033[0m"
 echo -e "\033[34mRunning with the following properties:\033[0m"
 echo -e "\033[34mBuild Type: $BUILD_TYPE\033[0m"
 echo -e "\033[34mClean Build: $CLEAN\033[0m"
-echo -e "\033[34mLibrary Type (Shared/Static): $SHARED\033[0m"
+echo -e "\033[34mLibrary Type (Shared/Static): $LIBRARY_TYPE\033[0m"
 echo -e "\033[34mGPU Support: $GPU\033[0m"
 echo -e "\033[34m#############################################\033[0m"
 echo " "
 
 # Set the executable path based on the build type
-EXECUTABLE="./build/$BUILD_TYPE-$SHARED/Sandbox/Sandbox"
+EXECUTABLE="./build/$BUILD_TYPE-$LIBRARY_TYPE/Sandbox/Sandbox"
 
 # Remove existing build directory if it exists and the clean flag is set
 if [ "$CLEAN" = true ]; then
@@ -63,7 +63,7 @@ if [ "$CLEAN" = true ]; then
 fi
 
 # Create build directory
-if [ "$SHARED" = "SHARED" ]; then
+if [ "$LIBRARY_TYPE" = "SHARED" ]; then
     cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
 else
     cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="OFF" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
