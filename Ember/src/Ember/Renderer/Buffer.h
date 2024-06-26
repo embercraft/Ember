@@ -31,7 +31,7 @@ namespace Ember {
 		return 0;
 	}
 
-	struct BufferElement
+	struct EMBER_API BufferElement
 	{
 		std::string Name;
 		ShaderDataType Type;
@@ -68,7 +68,7 @@ namespace Ember {
 		}
 	};
 
-	class BufferLayout
+	class EMBER_API BufferLayout
 	{
 	public:
 		BufferLayout() {}
