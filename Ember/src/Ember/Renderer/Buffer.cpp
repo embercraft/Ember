@@ -11,9 +11,9 @@ namespace Ember {
     {
         switch (Renderer::GetAPI())
         {
-            case RendererAPI::None:    EMBER_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-            case RendererAPI::OpenGL:  return new OpenGLVertexBuffer(vertices, size);
-            case RendererAPI::Vulkan:  EMBER_CORE_ASSERT(false, "RendererAPI::Vulkan is currently not supported!"); return nullptr;
+            case RendererAPI::API::None:    EMBER_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::OpenGL:  return new OpenGLVertexBuffer(vertices, size);
+            case RendererAPI::API::Vulkan:  EMBER_CORE_ASSERT(false, "RendererAPI::Vulkan is currently not supported!"); return nullptr;
         }
 
         EMBER_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -24,9 +24,9 @@ namespace Ember {
     {
         switch (Renderer::GetAPI())
         {
-            case RendererAPI::None:    EMBER_CORE_ASSERT(false, "Renderer API::None is currently not supported!"); return nullptr;
-            case RendererAPI::OpenGL:  return new OpenGLIndexBuffer(indices, size);
-            case RendererAPI::Vulkan:  EMBER_CORE_ASSERT(false, "Renderer API::Vulkan is currently not supported!"); return nullptr;
+            case RendererAPI::API::None:    EMBER_CORE_ASSERT(false, "Renderer API::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::OpenGL:  return new OpenGLIndexBuffer(indices, size);
+            case RendererAPI::API::Vulkan:  EMBER_CORE_ASSERT(false, "Renderer API::Vulkan is currently not supported!"); return nullptr;
         }
 
         EMBER_CORE_ASSERT(false, "Unknown RendererAPI!");
