@@ -6,11 +6,9 @@
 #include "Events/Event.h"
 #include "Ember/Events/ApplicationEvent.h"
 
-#include "Ember/ImGui/ImGuiLayer.h"
+#include "Ember/Core/Timestep.h"
 
-#include "Ember/Renderer/Shader.h"
-#include "Ember/Renderer/Buffer.h"
-#include "Ember/Renderer/VertexArray.h"
+#include "Ember/ImGui/ImGuiLayer.h"
 
 namespace Ember
 {
@@ -41,13 +39,7 @@ namespace Ember
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-
-		// unsigned int m_VertexArray;
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<VertexArray> m_VertexArray;
-
-		std::shared_ptr<Shader> m_BlueShader;
-		std::shared_ptr<VertexArray> m_SquareVA;
+		float m_LastFrameTime = 0.0f;
 
 	private:
 		static Application* s_Instance;
