@@ -21,7 +21,7 @@ class ExampleLayer : public Ember::Layer
 			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
 		};
 
-		std::shared_ptr<Ember::VertexBuffer> vertexBuffer;
+		Ember::Ref<Ember::VertexBuffer> vertexBuffer;
 		vertexBuffer.reset(Ember::VertexBuffer::Create(vertices, sizeof(vertices)));
 		Ember::BufferLayout layout = {
 			{ Ember::ShaderDataType::Float3, "a_Position" },
@@ -31,7 +31,7 @@ class ExampleLayer : public Ember::Layer
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		std::shared_ptr<Ember::IndexBuffer> indexBuffer;
+		Ember::Ref<Ember::IndexBuffer> indexBuffer;
 		indexBuffer.reset(Ember::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
@@ -44,7 +44,7 @@ class ExampleLayer : public Ember::Layer
 			-0.5f,  0.5f, 0.0f
 		};
 
-		std::shared_ptr<Ember::VertexBuffer> squareVB;
+		Ember::Ref<Ember::VertexBuffer> squareVB;
 		squareVB.reset(Ember::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
 			{ Ember::ShaderDataType::Float3, "a_Position" }
@@ -52,7 +52,7 @@ class ExampleLayer : public Ember::Layer
 		m_SquareVA->AddVertexBuffer(squareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		std::shared_ptr<Ember::IndexBuffer> squareIB;
+		Ember::Ref<Ember::IndexBuffer> squareIB;
 		squareIB.reset(Ember::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIB);
 
@@ -187,11 +187,11 @@ class ExampleLayer : public Ember::Layer
 	}
 
 private:
-	std::shared_ptr<Ember::Shader> m_Shader;
-	std::shared_ptr<Ember::VertexArray> m_VertexArray;
+	Ember::Ref<Ember::Shader> m_Shader;
+	Ember::Ref<Ember::VertexArray> m_VertexArray;
 
-	std::shared_ptr<Ember::Shader> m_FlatColorShader;
-	std::shared_ptr<Ember::VertexArray> m_SquareVA;
+	Ember::Ref<Ember::Shader> m_FlatColorShader;
+	Ember::Ref<Ember::VertexArray> m_SquareVA;
 
 	Ember::OrthographicCamera m_Camera;
 

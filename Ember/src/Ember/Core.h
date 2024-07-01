@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #if defined(EMBER_PLATFORM_LINUX)
     #if defined(EMBER_BUILD_LIB) && defined(BUILD_SHARED_LIBS)
         // Export symbols in shared library build
@@ -41,3 +43,11 @@
 #define BIT(x) (1 << x)
 
 #define EMBER_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+namespace Ember {
+    template<typename T>
+    using Scope = std::unique_ptr<T>;
+
+    template<typename T>
+    using Ref = std::shared_ptr<T>;
+} 
