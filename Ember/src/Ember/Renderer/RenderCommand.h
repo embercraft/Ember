@@ -8,6 +8,11 @@ namespace Ember {
     class EMBER_API RenderCommand
     {
     public:
+        inline static void Init()
+        {
+            s_RendererAPI->init();
+        }
+
         inline static void SetClearColor(const glm::vec4& color)
         {
             s_RendererAPI->setClearColor(color);

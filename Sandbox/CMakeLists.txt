@@ -36,3 +36,9 @@ endif()
 
 # Set C++ standard
 target_compile_features(Sandbox PRIVATE cxx_std_17)
+
+add_custom_command(TARGET Sandbox POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Sandbox/assets
+)

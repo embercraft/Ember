@@ -53,7 +53,7 @@ echo -e "\033[34m#############################################\033[0m"
 echo " "
 
 # Set the executable path based on the build type
-EXECUTABLE="./build/$BUILD_TYPE-$LIB_TYPE/Sandbox/Sandbox"
+EXECUTABLE="./Sandbox"
 
 # Remove existing build directory if it exists and the clean flag is set
 if [ "$CLEAN" = true ]; then
@@ -82,6 +82,9 @@ if [ "$GPU" = true ]; then
         export __GLX_VENDOR_LIBRARY_NAME=nvidia
     fi
 fi
+
+# Change to the build directory
+cd build/$BUILD_TYPE-$LIB_TYPE/Sandbox/ || { echo -e "\033[31mFailed to navigate to the build directory.\033[0m"; exit 1; }
 
 # Run the executable with the remaining arguments
 if [ "$TIMED_RUN" = true ]; then
