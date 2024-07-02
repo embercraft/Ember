@@ -37,18 +37,20 @@ class ExampleLayer : public Ember::Layer
 
 		m_SquareVA.reset(Ember::VertexArray::Create());
 
-		float squareVertices[3 * 4] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f
+		float squareVertices[5 * 4] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
 		Ember::Ref<Ember::VertexBuffer> squareVB;
 		squareVB.reset(Ember::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
-			{ Ember::ShaderDataType::Float3, "a_Position" }
+			{ Ember::ShaderDataType::Float3, "a_Position" },
+			{ Ember::ShaderDataType::Float2, "a_TextCoord" }
 		});
+
 		m_SquareVA->AddVertexBuffer(squareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
@@ -126,6 +128,46 @@ class ExampleLayer : public Ember::Layer
 		)";
 
 		m_FlatColorShader.reset(Ember::Shader::Create(flatShaderVertexSrc, flatShaderFragmentSrc));
+
+		std::string textureShaderVertexSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TextCoord;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			out vec2 v_TextCoord;
+
+			void main()
+			{
+				v_TextCoord = a_TextCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);	
+			}
+		)";
+
+		std::string textureShaderFragmentSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) out vec4 color;
+
+			in vec2 v_TextCoord;
+
+			uniform sampler2D u_Texture;
+
+			void main()
+			{
+				color = texture(u_Texture, v_TextCoord);
+			}
+		)";
+
+		m_TextureShader.reset(Ember::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc));
+
+		m_Texture = Ember::Texture2D::Create("Sandbox/assets/textures/Checkerboard.png");
+
+		std::dynamic_pointer_cast<Ember::OpenGLShader>(m_TextureShader)->Bind();
+		std::dynamic_pointer_cast<Ember::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Ember::Timestep ts) override
@@ -170,7 +212,11 @@ class ExampleLayer : public Ember::Layer
 			}
 		}
 
-		Ember::Renderer::Submit(m_Shader, m_VertexArray);
+		m_Texture->Bind();
+		Ember::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+		// Triangle
+		// Ember::Renderer::Submit(m_Shader, m_VertexArray);
 
 		Ember::Renderer::EndScene();
 	}
@@ -190,8 +236,10 @@ private:
 	Ember::Ref<Ember::Shader> m_Shader;
 	Ember::Ref<Ember::VertexArray> m_VertexArray;
 
-	Ember::Ref<Ember::Shader> m_FlatColorShader;
+	Ember::Ref<Ember::Shader> m_FlatColorShader, m_TextureShader;
 	Ember::Ref<Ember::VertexArray> m_SquareVA;
+
+	Ember::Ref<Ember::Texture2D> m_Texture;
 
 	Ember::OrthographicCamera m_Camera;
 

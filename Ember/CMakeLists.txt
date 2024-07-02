@@ -29,6 +29,11 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Glad)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/glm)
 
+# Define stb_image target
+add_library(stb_image INTERFACE)
+target_include_directories(stb_image INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/stb_image)
+target_sources(stb_image INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/stb_image/stb_image.cpp)
+
 # Include directories
 target_include_directories(Ember
     PUBLIC
@@ -100,7 +105,7 @@ if(EMBER_ENABLE_ASSERTS)
 endif()
 
 # Link Libraries
-target_link_libraries(Ember PRIVATE spdlog glfw dl pthread OpenGL::GL Glad ImGui glm)
+target_link_libraries(Ember PRIVATE spdlog glfw dl pthread OpenGL::GL Glad ImGui glm stb_image)
 
 # Precompiled headers
 target_precompile_headers(Ember PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Emberpch.h)
