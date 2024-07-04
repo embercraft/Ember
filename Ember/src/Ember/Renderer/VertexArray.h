@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Ember/Core.h"
-#include "Ember/Renderer/Buffer.h"
+#include "Buffer.h"
 
 #include <memory>
 

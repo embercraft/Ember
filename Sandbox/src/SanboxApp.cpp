@@ -93,7 +93,7 @@ class ExampleLayer : public Ember::Layer
 			}
 		)";
 
-		m_Shader.reset(Ember::Shader::Create(vertexSrc, fragmentSrc));
+		m_Shader = Ember::Shader::Create("VertexColorTriangle", vertexSrc, fragmentSrc);
 
 		std::string flatShaderVertexSrc = R"(
 			#version 330 core
@@ -127,15 +127,15 @@ class ExampleLayer : public Ember::Layer
 			}
 		)";
 
-		m_FlatColorShader.reset(Ember::Shader::Create(flatShaderVertexSrc, flatShaderFragmentSrc));
+		m_FlatColorShader = Ember::Shader::Create("DiscoShader", flatShaderVertexSrc, flatShaderFragmentSrc);
 
-		m_TextureShader.reset(Ember::Shader::Create("assets/shaders/Texture.glsl"));
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = Ember::Texture2D::Create("assets/textures/Checkerboard.png");
 		m_Texture2 = Ember::Texture2D::Create("assets/textures/opengl.png");
 
-		std::dynamic_pointer_cast<Ember::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<Ember::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		std::dynamic_pointer_cast<Ember::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<Ember::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Ember::Timestep ts) override
@@ -180,11 +180,13 @@ class ExampleLayer : public Ember::Layer
 			}
 		}
 
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+
 		m_Texture->Bind();
-		Ember::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Ember::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 		
 		m_Texture2->Bind();
-		Ember::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Ember::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		// Triangle
 		// Ember::Renderer::Submit(m_Shader, m_VertexArray);
@@ -204,10 +206,11 @@ class ExampleLayer : public Ember::Layer
 	}
 
 private:
+	Ember::ShaderLibrary m_ShaderLibrary;
 	Ember::Ref<Ember::Shader> m_Shader;
 	Ember::Ref<Ember::VertexArray> m_VertexArray;
 
-	Ember::Ref<Ember::Shader> m_FlatColorShader, m_TextureShader;
+	Ember::Ref<Ember::Shader> m_FlatColorShader;// m_TextureShader;
 	Ember::Ref<Ember::VertexArray> m_SquareVA;
 
 	Ember::Ref<Ember::Texture2D> m_Texture, m_Texture2;
