@@ -63,7 +63,7 @@ if [ "$CLEAN" = true ]; then
 fi
 
 # Create build directory
-if [ "$LIB_TYPE" = "Sshared" ]; then
+if [ "$LIB_TYPE" = "Shared" ]; then
     cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
 else
     cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="OFF" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?

@@ -29,7 +29,6 @@ message(STATUS "Using C standard version ${CMAKE_C_STANDARD}")
 # Set the build type
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
-    set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
 endif()
 
 # Check X11 or Wayland and set the appropriate GLFW backend flag
