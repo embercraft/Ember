@@ -16,6 +16,7 @@
 
 // ---Renderer-----------------
 #include "Ember/Renderer/Renderer.h"
+#include "Ember/Renderer/Renderer2D.h"
 #include "Ember/Renderer/RenderCommand.h"
 
 #include "Ember/Renderer/Buffer.h"

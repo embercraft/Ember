@@ -6,8 +6,8 @@
 #include <vector>
 
 namespace Ember {
-    class EMBER_API OpenGLVertexArray : public VertexArray
-    {
+	class EMBER_API OpenGLVertexArray : public VertexArray
+	{
 	public:
 		OpenGLVertexArray();
 		virtual ~OpenGLVertexArray();
@@ -20,7 +20,7 @@ namespace Ember {
 
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
-        
+		
 	private:
 		uint32_t m_RendererID;
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;

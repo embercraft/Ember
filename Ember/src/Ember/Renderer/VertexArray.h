@@ -6,10 +6,10 @@
 #include <memory>
 
 namespace Ember {
-    class EMBER_API VertexArray
-    {
-    public:
-        virtual ~VertexArray() {}
+	class EMBER_API VertexArray
+	{
+	public:
+		virtual ~VertexArray() {}
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
@@ -21,6 +21,6 @@ namespace Ember {
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const = 0;
 
 		static Ref<VertexArray> Create();
-        
-    };
+		
+	};
 }

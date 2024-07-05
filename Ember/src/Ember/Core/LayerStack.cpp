@@ -3,7 +3,7 @@
 
 namespace Ember
 {
-    LayerStack::LayerStack()
+	LayerStack::LayerStack()
 	{
 	}
 

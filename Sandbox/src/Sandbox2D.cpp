@@ -6,30 +6,7 @@ Sandbox2D::Sandbox2D()
 }
 
 void Sandbox2D::OnAttach()
-{
-	m_SquareVA = Ember::VertexArray::Create();
-
-	float squareVertices[5 * 4] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.5f,  0.5f, 0.0f,
-		-0.5f,  0.5f, 0.0f
-	};
-
-	Ember::Ref<Ember::VertexBuffer> squareVB;
-	squareVB.reset(Ember::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
-	squareVB->SetLayout({
-		{Ember::ShaderDataType::Float3, "a_Position"}
-	});
-
-	m_SquareVA->AddVertexBuffer(squareVB);
-
-	uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
-	Ember::Ref<Ember::IndexBuffer> squareIB;
-	squareIB.reset(Ember::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
-	m_SquareVA->SetIndexBuffer(squareIB);
-
-	m_FlatColorShader = Ember::Shader::Create("assets/shaders/FlatColor.glsl");
+{	
 }
 
 void Sandbox2D::OnDetach()
@@ -45,14 +22,11 @@ void Sandbox2D::OnUpdate(Ember::Timestep ts)
 	Ember::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 	Ember::RenderCommand::Clear();
 
-	Ember::Renderer::BeginScene(m_CameraController.GetCamera());
+	Ember::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-	std::dynamic_pointer_cast<Ember::OpenGLShader>(m_FlatColorShader)->Bind();
-	std::dynamic_pointer_cast<Ember::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
+	Ember::Renderer2D::DrawQuad({0.0f, 0.0f}, {1.0f, 1.0f}, m_SquareColor);
 
-	Ember::Renderer::Submit(m_FlatColorShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-
-	Ember::Renderer::EndScene();
+	Ember::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnEvent(Ember::Event &e)

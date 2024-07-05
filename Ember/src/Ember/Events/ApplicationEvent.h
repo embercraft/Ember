@@ -5,80 +5,80 @@
 namespace Ember 
 {
 
-    class EMBER_API WindowResizeEvent : public Event
-    {
-    public:
-        WindowResizeEvent(unsigned int width, unsigned int height)
-                : m_Width(width), m_Height(height) {}
+	class EMBER_API WindowResizeEvent : public Event
+	{
+	public:
+		WindowResizeEvent(unsigned int width, unsigned int height)
+				: m_Width(width), m_Height(height) {}
 
-        inline unsigned int GetWidth() const { return m_Width; }
-        inline unsigned int GetHeight() const { return m_Height; }
+		inline unsigned int GetWidth() const { return m_Width; }
+		inline unsigned int GetHeight() const { return m_Height; }
 
-        std::string ToString() const override
-        {
-            std::stringstream ss;
-            ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
-            return ss.str();
-        }
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
+			return ss.str();
+		}
 
-        EVENT_CLASS_TYPE(WindowResize)
-        EVENT_CLASS_CATEGORY(EventCategoryApplication)
-    private:
-        unsigned int m_Width, m_Height;
-    };
+		EVENT_CLASS_TYPE(WindowResize)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	private:
+		unsigned int m_Width, m_Height;
+	};
 
-    class EMBER_API WindowCloseEvent : public Event
-    {
-    public:
-        WindowCloseEvent() {}
+	class EMBER_API WindowCloseEvent : public Event
+	{
+	public:
+		WindowCloseEvent() {}
 
-        EVENT_CLASS_TYPE(WindowClose)
-        EVENT_CLASS_CATEGORY(EventCategoryApplication)
-    };
+		EVENT_CLASS_TYPE(WindowClose)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
 
-    class EMBER_API WindowMinimizedEvent : public Event
-    {
-    public:
-        WindowMinimizedEvent() {}
+	class EMBER_API WindowMinimizedEvent : public Event
+	{
+	public:
+		WindowMinimizedEvent() {}
 
-        EVENT_CLASS_TYPE(WindowMinimized)
-        EVENT_CLASS_CATEGORY(EventCategoryApplication)
-    };
+		EVENT_CLASS_TYPE(WindowMinimized)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
 
-    class EMBER_API WindowRestoredEvent : public Event
-    {
-    public:
-        WindowRestoredEvent() {}
+	class EMBER_API WindowRestoredEvent : public Event
+	{
+	public:
+		WindowRestoredEvent() {}
 
-        EVENT_CLASS_TYPE(WindowRestored)
-        EVENT_CLASS_CATEGORY(EventCategoryApplication)
-    };
+		EVENT_CLASS_TYPE(WindowRestored)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
 
-    class EMBER_API AppTickEvent : public Event
-    {
-    public:
-    AppTickEvent() {}
+	class EMBER_API AppTickEvent : public Event
+	{
+	public:
+	AppTickEvent() {}
 
-    EVENT_CLASS_TYPE(AppTick)
-    EVENT_CLASS_CATEGORY(EventCategoryApplication)
-    };
+	EVENT_CLASS_TYPE(AppTick)
+	EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
 
-    class EMBER_API AppUpdateEvent : public Event
-    {
-    public:
-        AppUpdateEvent() {}
+	class EMBER_API AppUpdateEvent : public Event
+	{
+	public:
+		AppUpdateEvent() {}
 
-    EVENT_CLASS_TYPE(AppUpdate)
-    EVENT_CLASS_CATEGORY(EventCategoryApplication)
-    };
+	EVENT_CLASS_TYPE(AppUpdate)
+	EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
 
-    class EMBER_API AppRenderEvent : public Event
-    {
-    public:
-        AppRenderEvent() {}
+	class EMBER_API AppRenderEvent : public Event
+	{
+	public:
+		AppRenderEvent() {}
 
-    EVENT_CLASS_TYPE(AppRender)
-    EVENT_CLASS_CATEGORY(EventCategoryApplication)
-    };
+	EVENT_CLASS_TYPE(AppRender)
+	EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
 
 }

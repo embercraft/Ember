@@ -14,8 +14,8 @@ namespace Ember {
 		unsigned int Height;
 
 		WindowProps(const std::string& title = "Ember Engine",
-			        unsigned int width = 1280,
-			        unsigned int height = 720)
+					unsigned int width = 1280,
+					unsigned int height = 720)
 			: Title(title), Width(width), Height(height)
 		{
 		}

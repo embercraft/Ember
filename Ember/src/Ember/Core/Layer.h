@@ -9,8 +9,8 @@
 
 namespace Ember
 {
-    class EMBER_API Layer
-    {
+	class EMBER_API Layer
+	{
 	public:
 		Layer(const std::string& name = "Layer");
 		virtual ~Layer();
