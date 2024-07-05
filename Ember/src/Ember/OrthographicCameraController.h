@@ -25,6 +25,9 @@ namespace Ember {
         inline OrthographicCamera& GetCamera() { return m_Camera; }
         inline const OrthographicCamera& GetCamera() const { return m_Camera; }
 
+        inline float GetZoomLevel() { return m_ZoomLevel; }
+        inline void SetZoomLevel(float level) { m_ZoomLevel = level; }
+
     private:
         bool OnMouseScrolled(MouseScrolledEvent& e);
         bool OnWindowResized(WindowResizeEvent& e);
