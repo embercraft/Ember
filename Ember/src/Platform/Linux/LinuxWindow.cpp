@@ -1,5 +1,5 @@
 #include "Emberpch.h"
-#include "LinuxWindow.h"
+#include "Platform/Linux/LinuxWindow.h"
 
 #include "Ember/Events/ApplicationEvent.h"
 #include "Ember/Events/MouseEvent.h"

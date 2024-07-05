@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Core.h"
-#include "Window.h"
-#include "Ember/LayerStack.h"
-#include "Events/Event.h"
+#include "Ember/Core/Core.h"
+#include "Ember/Core/Window.h"
+#include "Ember/Core/LayerStack.h"
+#include "Ember/Events/Event.h"
 #include "Ember/Events/ApplicationEvent.h"
 
 #include "Ember/Core/Timestep.h"

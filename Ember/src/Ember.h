@@ -1,16 +1,16 @@
 #pragma once
 
 // For use by Ember applications
-#include "Ember/Application.h"
-#include "Ember/Layer.h"
-#include "Ember/Log.h"
+#include "Ember/Core/Application.h"
+#include "Ember/Core/Layer.h"
+#include "Ember/Core/Log.h"
 
 #include "Ember/Core/Timestep.h"
 
-#include "Ember/Input.h"
-#include "Ember/KeyCodes.h"
-#include "Ember/MouseButtonCodes.h"
-#include "Ember/OrthographicCameraController.h"
+#include "Ember/Core/Input.h"
+#include "Ember/Core/KeyCodes.h"
+#include "Ember/Core/MouseButtonCodes.h"
+#include "Ember/Renderer/OrthographicCameraController.h"
 
 #include "Ember/ImGui/ImGuiLayer.h"
 
@@ -27,5 +27,5 @@
 // ----------------------------
 
 // --------Entry Point---------
-#include "Ember/EntryPoint.h"  
+#include "Ember/Core/EntryPoint.h"  
 // ----------------------------

@@ -1,7 +1,7 @@
 #include "Emberpch.h"
-#include "Texture.h"
+#include "Ember/Renderer/Texture.h"
+#include "Ember/Renderer/Renderer.h"
 
-#include "Renderer.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Ember {

@@ -1,7 +1,7 @@
 #include "Emberpch.h"
 
-#include "VertexArray.h"
-#include "Renderer.h"
+#include "Ember/Renderer/VertexArray.h"
+#include "Ember/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Ember/Core.h"
-#include "RendererAPI.h"
+#include "Ember/Core/Core.h"
+#include "Ember/Renderer/RendererAPI.h"
 
 namespace Ember {
 

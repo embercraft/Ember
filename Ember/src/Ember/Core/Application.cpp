@@ -1,11 +1,11 @@
 #include "Emberpch.h"
-#include "Application.h"
+#include "Ember/Core/Application.h"
 
-#include "Ember/Log.h"
+#include "Ember/Core/Log.h"
 
 #include "Ember/Renderer/Renderer.h"
 
-#include "Input.h"
+#include "Ember/Core/Input.h"
 
 #include <GLFW/glfw3.h>
 

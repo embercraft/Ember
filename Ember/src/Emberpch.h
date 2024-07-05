@@ -14,7 +14,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Ember/Log.h"
+#include "Ember/Core/Log.h"
 
 #ifdef EMBER_PLATFORM_WINDOWS
     #include <Windows.h>

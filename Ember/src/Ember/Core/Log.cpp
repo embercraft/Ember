@@ -1,5 +1,5 @@
 #include "Emberpch.h"
-#include "Log.h"
+#include "Ember/Core/Log.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace Ember

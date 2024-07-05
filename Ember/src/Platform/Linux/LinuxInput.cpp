@@ -1,7 +1,7 @@
 #include "Emberpch.h"
-#include "LinuxInput.h"
+#include "Platform/Linux/LinuxInput.h"
 
-#include "Ember/Application.h"
+#include "Ember/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace Ember

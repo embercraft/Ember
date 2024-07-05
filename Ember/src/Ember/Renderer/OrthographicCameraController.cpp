@@ -1,12 +1,12 @@
 #include "Emberpch.h"
 
-#include "OrthographicCameraController.h"
-#include "Input.h"
+#include "Ember/Renderer/OrthographicCameraController.h"
+#include "Ember/Core/Input.h"
 
 namespace Ember {
 
     OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-        : m_Camera(-aspectRatio * m_ZoomLevel, aspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_AspectRatio(aspectRatio), m_Rotation(rotation)
+        : m_AspectRatio(aspectRatio), m_Camera(-aspectRatio * m_ZoomLevel, aspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
     {
     }
 
@@ -45,7 +45,9 @@ namespace Ember {
     bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
     {
         m_ZoomLevel -= e.GetYOffset() * 0.25f;
+        m_ZoomLevel = std::min(m_ZoomLevel, 5.0f);
         m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
+
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
         return false;
     }

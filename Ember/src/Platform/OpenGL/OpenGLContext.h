@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ember/Core.h"
+#include "Ember/Core/Core.h"
 #include "Ember/Renderer/GraphicsContext.h"
 
 struct GLFWwindow;

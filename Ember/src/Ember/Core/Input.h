@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Ember/Core.h"
-#include "KeyCodes.h"
+#include "Ember/Core/Core.h"
+#include "Ember/Core/KeyCodes.h"
 
 namespace Ember
 {

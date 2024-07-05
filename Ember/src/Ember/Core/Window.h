@@ -2,8 +2,8 @@
 
 #include "Emberpch.h"
 
-#include "Core.h"
-#include "Events/Event.h"
+#include "Ember/Core/Core.h"
+#include "Ember/Events/Event.h"
 
 namespace Ember {
 

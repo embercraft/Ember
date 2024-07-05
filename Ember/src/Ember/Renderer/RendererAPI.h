@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Ember/Core.h"
-#include "VertexArray.h"
+#include "Ember/Core/Core.h"
+#include "Ember/Renderer/VertexArray.h"
 
 #include <glm/glm.hpp>
 #include <memory>

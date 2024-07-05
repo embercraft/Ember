@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Ember/Core.h"
-#include "RenderCommand.h"
-#include "Shader.h"
-#include "OrthographicCamera.h"
+#include "Ember/Core/Core.h"
+#include "Ember/Renderer/RenderCommand.h"
+#include "Ember/Renderer/Shader.h"
+#include "Ember/Renderer/OrthographicCamera.h"
 
 namespace Ember {
 

@@ -1,7 +1,7 @@
 #include "Emberpch.h"
 
-#include "Renderer.h"
-#include "Shader.h"
+#include "Ember/Renderer/Renderer.h"
+#include "Ember/Renderer/Shader.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
 

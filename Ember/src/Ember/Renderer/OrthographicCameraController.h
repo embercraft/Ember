@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Core.h"
+#include "Ember/Core/Core.h"
 
-#include "Renderer/OrthographicCamera.h"
-#include "Core/Timestep.h"
-// #include "Events/Event.h"
-#include "Events/ApplicationEvent.h"
-#include "Events/MouseEvent.h"
-// #include "Events/KeyEvent.h"
+#include "Ember/Renderer/OrthographicCamera.h"
 
-#include "KeyCodes.h"
+#include "Ember/Core/Timestep.h"
+
+#include "Ember/Events/ApplicationEvent.h"
+#include "Ember/Events/MouseEvent.h"
+
+#include "Ember/Core/KeyCodes.h"
 
 #include <glm/glm.hpp>
 
