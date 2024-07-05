@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) Attach",
+            "name": "(lldb) launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Debug-Static/Sandbox/Sandbox",
