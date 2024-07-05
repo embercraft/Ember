@@ -6,7 +6,7 @@ current_time=$(date +"%H:%M:%S")
 
 # Initialize default values
 BUILD_TYPE="Debug"
-LIB_TYPE="Shared"
+LIB_TYPE="Static"
 
 # Parse arguments to determine BUILD_TYPE and LIB_TYPE
 for arg in "$@"; do
@@ -15,7 +15,7 @@ for arg in "$@"; do
             BUILD_TYPE="Release"
             ;;
         ("s")
-            LIB_TYPE="Static"
+            LIB_TYPE="Shared"
             ;;
     esac
 done
