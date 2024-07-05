@@ -108,7 +108,8 @@ namespace Ember {
 			data.EventCallback(event);
 		});
 
-		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, [[maybe_unused]] int mods){
+		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, [[maybe_unused]] int mods)
+		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			switch(action)
@@ -141,6 +142,26 @@ namespace Ember {
 			MouseMovedEvent event((float)xpos, (float)ypos);
 			data.EventCallback(event);
 		});
+
+		// set window minimized callback
+		glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconified)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			if (iconified)
+			{
+				WindowMinimizedEvent event;
+				data.EventCallback(event);
+			}
+			else
+			{
+				WindowRestoredEvent event;
+				data.EventCallback(event);
+			}
+		});
+
+		// set window restored callback
+		
 	}
 
 	void LinuxWindow::Shutdown()

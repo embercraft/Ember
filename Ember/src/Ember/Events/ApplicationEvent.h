@@ -36,6 +36,24 @@ namespace Ember
         EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
 
+    class EMBER_API WindowMinimizedEvent : public Event
+    {
+    public:
+        WindowMinimizedEvent() {}
+
+        EVENT_CLASS_TYPE(WindowMinimized)
+        EVENT_CLASS_CATEGORY(EventCategoryApplication)
+    };
+
+    class EMBER_API WindowRestoredEvent : public Event
+    {
+    public:
+        WindowRestoredEvent() {}
+
+        EVENT_CLASS_TYPE(WindowRestored)
+        EVENT_CLASS_CATEGORY(EventCategoryApplication)
+    };
+
     class EMBER_API AppTickEvent : public Event
     {
     public:
@@ -62,4 +80,5 @@ namespace Ember
     EVENT_CLASS_TYPE(AppRender)
     EVENT_CLASS_CATEGORY(EventCategoryApplication)
     };
+
 }

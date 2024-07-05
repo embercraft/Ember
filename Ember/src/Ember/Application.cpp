@@ -50,6 +50,9 @@ namespace Ember {
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+		dispatcher.Dispatch<WindowMinimizedEvent>(BIND_EVENT_FN(OnWindowMinimized));
+		dispatcher.Dispatch<WindowRestoredEvent>(BIND_EVENT_FN(OnWindowRestored));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
@@ -67,12 +70,21 @@ namespace Ember {
 			Timestep timestep = (time - m_LastFrameTime);
 			m_LastFrameTime = time;
 
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(timestep);
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->OnUpdate(timestep);
+				}
+			}
 
 			m_ImGuiLayer->Begin();
+
 			for (Layer* layer : m_LayerStack)
+			{
 				layer->OnImGuiRender();
+			}
+
 			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
@@ -83,6 +95,23 @@ namespace Ember {
 	{
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		return false;
+	}
+
+	bool Application::OnWindowMinimized(WindowMinimizedEvent& e)
+	{
+		m_Minimized = true;
+		return false;
+	}
+
+	bool Application::OnWindowRestored(WindowRestoredEvent& e)
+	{
+		m_Minimized = false;
+		return false;
 	}
 
 }
