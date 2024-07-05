@@ -11,7 +11,7 @@ class ExampleLayer : public Ember::Layer
 {
 	public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_CameraRotation(0.0f)
+		: Layer("Example"), m_CameraController(1280.0f / 720.0f, true)
 	{
 		m_VertexArray.reset(Ember::VertexArray::Create());
 
@@ -140,30 +140,16 @@ class ExampleLayer : public Ember::Layer
 
 	void OnUpdate(Ember::Timestep ts) override
 	{
-		EMBER_INFO("Delta time: {0}s ({1}ms)", ts.GetSeconds(), ts.GetMilliseconds());
-		
-		if (Ember::Input::IsKeyPressed(EMBER_KEY_LEFT))
-			m_CameraPosition.x -= m_CameraTranslationSpeed * ts;
-		else if (Ember::Input::IsKeyPressed(EMBER_KEY_RIGHT))
-			m_CameraPosition.x += m_CameraTranslationSpeed * ts;
-		
-		if (Ember::Input::IsKeyPressed(EMBER_KEY_UP))
-			m_CameraPosition.y += m_CameraTranslationSpeed * ts;
-		else if (Ember::Input::IsKeyPressed(EMBER_KEY_DOWN))
-			m_CameraPosition.y -= m_CameraTranslationSpeed * ts;
+		// EMBER_INFO("Delta time: {0}s ({1}ms)", ts.GetSeconds(), ts.GetMilliseconds());
 
-		if (Ember::Input::IsKeyPressed(EMBER_KEY_A))
-			m_CameraRotation += m_CameraRotationSpeed * ts;
-		else if (Ember::Input::IsKeyPressed(EMBER_KEY_D))
-			m_CameraRotation -= m_CameraRotationSpeed * ts;
+		// Update
+		m_CameraController.OnUpdate(ts);
 
+		// Render
 		Ember::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		Ember::RenderCommand::Clear();
 
-		m_Camera.setPosition(m_CameraPosition);
-		m_Camera.setRotation(m_CameraRotation);
-
-		Ember::Renderer::BeginScene(m_Camera);
+		Ember::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -203,6 +189,15 @@ class ExampleLayer : public Ember::Layer
 
 	void OnEvent(Ember::Event& event) override
 	{
+
+		m_CameraController.OnEvent(event);
+
+		// log keystrokes
+		// if(event.GetEventType() == Ember::EventType::KeyPressed)
+		// {
+		// 	Ember::KeyPressedEvent& e = (Ember::KeyPressedEvent&)event;
+		// 	EMBER_TRACE("{0}", (char)e.GetKeyCode());
+		// }
 	}
 
 private:
@@ -215,12 +210,7 @@ private:
 
 	Ember::Ref<Ember::Texture2D> m_Texture, m_Texture2;
 
-	Ember::OrthographicCamera m_Camera;
-
-	glm::vec3 m_CameraPosition;
-	float m_CameraRotation;
-	float m_CameraTranslationSpeed = 4.0f;
-	float m_CameraRotationSpeed = 180.0f;
+	Ember::OrthographicCameraController m_CameraController;
 
 	glm::vec3 m_SquareColor = {0.2f, 0.3f, 0.8f};
 };

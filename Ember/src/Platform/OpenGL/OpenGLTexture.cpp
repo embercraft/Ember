@@ -4,18 +4,11 @@
 #include <glad/glad.h>
 #include <stb_image.h>
 
-// include header to print current working directory
-#include <unistd.h>
-
 namespace Ember {
 
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
         : m_Path(path), m_Width(0), m_Height(0), m_RendererID(0)
     {
-        // print current working directory
-        char cwd[1024];
-        getcwd(cwd, sizeof(cwd));
-        EMBER_CORE_INFO("Current working directory: {0}", cwd);
         int width, height, channels;
         stbi_set_flip_vertically_on_load(1);
         stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
