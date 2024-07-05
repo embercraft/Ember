@@ -45,14 +45,14 @@ namespace Ember {
         Add(name, shader);
     }
 
-    Ember::Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
+    Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
     {
         auto shader = Shader::Create(filepath);
         Add(name, shader);
         return shader;
     }
 
-    Ember::Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
+    Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
     {
         auto shader = Shader::Create(filepath);
         Add(shader);

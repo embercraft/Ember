@@ -6,7 +6,7 @@
 
 namespace Ember
 {
-    Input* Input::s_instance = new LinuxInput();
+    Scope<Input> Input::s_instance = CreateScope<LinuxInput>();
 
     bool LinuxInput::IsKeyPressedImpl(int keycode)
     {
