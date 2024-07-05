@@ -25,7 +25,3 @@
 
 #include "Ember/Renderer/OrthographicCamera.h"
 // ----------------------------
-
-// --------Entry Point---------
-#include "Ember/Core/EntryPoint.h"  
-// ----------------------------

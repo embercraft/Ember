@@ -6,7 +6,7 @@
 namespace Ember {
 
     OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-        : m_AspectRatio(aspectRatio), m_Camera(-aspectRatio * m_ZoomLevel, aspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
+        : m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
     {
     }
 
@@ -28,6 +28,11 @@ namespace Ember {
             	m_CameraRotation += m_CameraRotationSpeed * ts;
             else if (Input::IsKeyPressed(EMBER_KEY_E))
             	m_CameraRotation -= m_CameraRotationSpeed * ts;
+
+            if(m_CameraRotation > 180.0f)
+                m_CameraRotation -= 360.0f;
+            else if(m_CameraRotation <= -180.0f)
+                m_CameraRotation += 360.0f;
 
             m_Camera.setRotation(m_CameraRotation);
         }

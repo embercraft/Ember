@@ -4,7 +4,7 @@
 
     extern Ember::Application* Ember::CreateApplication();
 
-    int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
+    int main(int argc, char** argv)
     {
         Ember::Log::Init();
         EMBER_CORE_TRACE("Initialized Log!");
