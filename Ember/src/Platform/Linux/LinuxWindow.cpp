@@ -143,24 +143,21 @@ namespace Ember {
 			data.EventCallback(event);
 		});
 
-		// set window minimized callback
 		glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconified)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-			if (iconified)
+			if (iconified)    // Minimized
 			{
 				WindowMinimizedEvent event;
 				data.EventCallback(event);
 			}
-			else
+			else              // Restored
 			{
 				WindowRestoredEvent event;
 				data.EventCallback(event);
 			}
 		});
-
-		// set window restored callback
 		
 	}
 
