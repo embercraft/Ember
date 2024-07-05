@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(lldb) Attach",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Debug-Static/Sandbox/Sandbox",
+            "cwd": "${workspaceFolder}/build/Debug-Static/Sandbox",
+            "stopAtEntry": false,
+            "preLaunchTask": "Build Project",
+            "externalConsole": false
+        }
+    ]
+}
