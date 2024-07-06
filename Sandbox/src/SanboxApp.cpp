@@ -3,13 +3,13 @@
 
 #include <imgui.h>
 
-#include "Platform/OpenGL/OpenGLShader.h"
-
 #include "Sandbox2D.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
+/*
 class ExampleLayer : public Ember::Layer
 {
 	public:
@@ -217,6 +217,8 @@ private:
 
 	glm::vec3 m_SquareColor = {0.2f, 0.3f, 0.8f};
 };
+*/
+
 
 class Sandbox : public Ember::Application
 {

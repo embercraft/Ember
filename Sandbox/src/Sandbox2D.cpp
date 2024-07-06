@@ -24,7 +24,7 @@ void Sandbox2D::OnUpdate(Ember::Timestep ts)
 
 	Ember::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-	Ember::Renderer2D::DrawQuad({0.0f, 0.0f}, {1.0f, 1.0f}, m_SquareColor);
+	Ember::Renderer2D::DrawQuad({0.0f, 0.0f}, {1.0f, 1.0f}, m_SquareColor, {30.0f, 0.0f});
 
 	Ember::Renderer2D::EndScene();
 }

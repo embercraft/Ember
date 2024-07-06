@@ -2,8 +2,6 @@
 
 #include "Ember.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
-
 #include <imgui.h>
 
 #include <glm/glm.hpp>

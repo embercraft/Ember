@@ -4,7 +4,7 @@
 #include "Ember/Renderer/VertexArray.h"
 #include "Ember/Renderer/Shader.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Ember{
 
@@ -51,28 +51,31 @@ namespace Ember{
 
 	void Renderer2D::BeginScene(const OrthographicCamera &camera)
 	{
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->Bind();
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->UploadUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->UploadUniformMat4("u_Transform", glm::mat4(1.0f));
+		s_Data->FlatColorShader->Bind();
+		s_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
 	{
 	}
-	
+
 	void Renderer2D::Flush()
 	{
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color)
+	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4& color, const glm::vec2& rotation)
 	{
-		DrawQuad({position.x, position.y, 0.0f}, size, color);
+		DrawQuad({position.x, position.y, 0.0f}, size, color, rotation);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color)
+	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4& color, const glm::vec2& rotation)
 	{
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->Bind();
-		std::dynamic_pointer_cast<Ember::OpenGLShader>(s_Data->FlatColorShader)->UploadUniformFloat4("u_Color", color);
+		s_Data->FlatColorShader->Bind();
+		s_Data->FlatColorShader->SetFloat4("u_Color", color);
+
+		// Create a transformation matrix
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f)) * glm::rotate(glm::mat4(1.0f), rotation.x, {0.0f, 0.0f, 1.0f});
+		s_Data->FlatColorShader->SetMat4("u_Transform", transform);
 
 		s_Data->SquareVA->Bind();
 		RenderCommand::DrawIndexed(s_Data->SquareVA);	
