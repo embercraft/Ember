@@ -15,7 +15,6 @@ GPU=false
 CLEAN=false
 LIB_TYPE="Static"
 ASSERTS="ON"
-RESET_TEXTURES=true
 
 # Parse arguments
 for arg in "$@"; do
@@ -34,9 +33,6 @@ for arg in "$@"; do
             ;;
         ("a")
             ASSERTS="OFF"
-            ;;
-        ("rt")
-            RESET_TEXTURES=false
             ;;
     esac
 done
@@ -62,12 +58,6 @@ if [ "$CLEAN" = true ]; then
     fi
 fi
 
-if [ "$RESET_TEXTURES" = true ]; then
-    if [ -d "build/$BUILD_TYPE-$LIB_TYPE/Sandbox/assets" ]; then
-        rm -rf "build/$BUILD_TYPE-$LIB_TYPE/Sandbox/assets" || { echo -e "\033[31mFailed to remove assets directory.\033[0m"; exit 1; }
-    fi
-fi
-
 # Create build directory
 if [ "$LIB_TYPE" = "Shared" ]; then
     cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
@@ -90,9 +80,9 @@ if [ "$GPU" = true ]; then
 fi
 
 # Copy assets to the build directory
-if [ "$RESET_TEXTURES" = true ]; then
-    cp -r Sandbox/assets build/$BUILD_TYPE-$LIB_TYPE/Sandbox/ || { echo -e "\033[31mFailed to copy assets to the build directory.\033[0m"; exit 1; }
-fi
+echo -e "\033[34mCopying assets to the build directory.\033[0m"
+rm -rf "build/$BUILD_TYPE-$LIB_TYPE/Sandbox/assets" || { echo -e "\033[31mFailed to remove assets directory.\033[0m"; exit 1; }
+cp -r Sandbox/assets build/$BUILD_TYPE-$LIB_TYPE/Sandbox/ || { echo -e "\033[31mFailed to copy assets to the build directory.\033[0m"; exit 1; }
 
 # Change to the build directory
 cd build/$BUILD_TYPE-$LIB_TYPE/Sandbox/ || { echo -e "\033[31mFailed to navigate to the build directory.\033[0m"; exit 1; }
