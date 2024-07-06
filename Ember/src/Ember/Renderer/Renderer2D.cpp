@@ -5,6 +5,7 @@
 #include "Ember/Renderer/Shader.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include "Renderer2D.h"
 
 namespace Ember{
 
@@ -12,6 +13,8 @@ namespace Ember{
 	{
 		Ref<VertexArray> SquareVA;
 		Ref<Shader> FlatColorShader;
+		Ref<Shader> TextureShader;
+		// Ref<Texture2D> WhiteTexture;
 	};
 
 	static Ref<Renderer2DStorage> s_Data;
@@ -23,16 +26,17 @@ namespace Ember{
 		s_Data->SquareVA = VertexArray::Create();
 
 		float squareVertices[5 * 4] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
 		Ref<VertexBuffer> squareVB;
 		squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
-			{ShaderDataType::Float3, "a_Position"}
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float2, "a_TexCoord"}
 		});
 
 		s_Data->SquareVA->AddVertexBuffer(squareVB);
@@ -43,6 +47,9 @@ namespace Ember{
 		s_Data->SquareVA->SetIndexBuffer(squareIB);
 
 		s_Data->FlatColorShader = Shader::Create("assets/shaders/FlatColor.glsl");
+		s_Data->TextureShader = Shader::Create("assets/shaders/Texture.glsl");
+		s_Data->TextureShader->Bind();
+		s_Data->TextureShader->SetInt("u_Texture", 0);
 	}
 
 	void Renderer2D::Shutdown()
@@ -53,6 +60,9 @@ namespace Ember{
 	{
 		s_Data->FlatColorShader->Bind();
 		s_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+
+		s_Data->TextureShader->Bind();
+		s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
@@ -81,4 +91,22 @@ namespace Ember{
 		RenderCommand::DrawIndexed(s_Data->SquareVA);	
 	}
 
+	void Renderer2D::DrawTexture(const glm::vec2 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const glm::vec2 &rotation)
+	{
+		DrawTexture({position.x, position.y, 0.0f}, size, texture, rotation);
+	}
+
+	void Renderer2D::DrawTexture(const glm::vec3 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const glm::vec2 &rotation)
+	{
+		s_Data->TextureShader->Bind();
+
+		// Create a transformation matrix
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f)) * glm::rotate(glm::mat4(1.0f), rotation.x, {0.0f, 0.0f, 1.0f});
+		s_Data->TextureShader->SetMat4("u_Transform", transform);
+
+		texture->Bind();
+
+		s_Data->SquareVA->Bind();
+		RenderCommand::DrawIndexed(s_Data->SquareVA);
+	}
 }
