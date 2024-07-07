@@ -74,7 +74,7 @@ namespace Ember {
 			std::replace(name.begin(), name.end(), '"', '\'');
 
 			json << std::setprecision(3) << std::fixed;
-			json << ",{";
+			json << "{";
 			json << "\"cat\":\"function\",";
 			json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
 			json << "\"name\":\"" << name << "\",";
