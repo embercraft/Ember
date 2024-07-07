@@ -73,44 +73,92 @@ namespace Ember{
 	{
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4& color, const glm::vec2& rotation)
+	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4& color)
 	{
-		DrawQuad({position.x, position.y, 0.0f}, size, color, rotation);
+		DrawQuad({position.x, position.y, 0.0f}, size, color);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4& color, const glm::vec2& rotation)
+	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4& color)
 	{
 		EMBER_PROFILE_FUNCTION();
 		
 		s_Data->TextureShader->SetFloat4("u_Color", color);
+		s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
+
 		s_Data->WhiteTexture->Bind();
 
 		// Create a transformation matrix
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f)) * glm::rotate(glm::mat4(1.0f), rotation.x, {0.0f, 0.0f, 1.0f});
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
 		s_Data->TextureShader->SetMat4("u_Transform", transform);
 
 		s_Data->SquareVA->Bind();
 		RenderCommand::DrawIndexed(s_Data->SquareVA);	
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const glm::vec2 &rotation)
+	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& tintColor)
 	{
-		DrawQuad({position.x, position.y, 0.0f}, size, texture, rotation);
+		DrawQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, tintColor);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const glm::vec2 &rotation)
+	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& tintColor)
 	{
 		EMBER_PROFILE_FUNCTION();
 		
-		s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+		s_Data->TextureShader->SetFloat4("u_Color", tintColor);
+		s_Data->TextureShader->SetFloat("u_TilingFactor", tilingFactor);
 
 		texture->Bind();
 
 		// Create a transformation matrix
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f)) * glm::rotate(glm::mat4(1.0f), rotation.x, {0.0f, 0.0f, 1.0f});
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
 		s_Data->TextureShader->SetMat4("u_Transform", transform);
 
 		s_Data->SquareVA->Bind();
 		RenderCommand::DrawIndexed(s_Data->SquareVA);
 	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float& rotation, const glm::vec4& color)
+	{
+		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, color);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float& rotation, const glm::vec4& color)
+	{
+		EMBER_PROFILE_FUNCTION();
+		
+		s_Data->TextureShader->SetFloat4("u_Color", color);
+		s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
+
+		s_Data->WhiteTexture->Bind();
+
+		// Create a transformation matrix
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f)) * glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		s_Data->TextureShader->SetMat4("u_Transform", transform);
+
+		s_Data->SquareVA->Bind();
+		RenderCommand::DrawIndexed(s_Data->SquareVA);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float& rotation, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& tintColor)
+	{
+		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, texture, tilingFactor, tintColor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float& rotation, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& tintColor)
+	{
+		EMBER_PROFILE_FUNCTION();
+		
+		s_Data->TextureShader->SetFloat4("u_Color", tintColor);
+		s_Data->TextureShader->SetFloat("u_TilingFactor", tilingFactor);
+
+		texture->Bind();
+
+		// Create a transformation matrix
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f)) * glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		s_Data->TextureShader->SetMat4("u_Transform", transform);
+
+		s_Data->SquareVA->Bind();
+		RenderCommand::DrawIndexed(s_Data->SquareVA);
+	}
+
 }

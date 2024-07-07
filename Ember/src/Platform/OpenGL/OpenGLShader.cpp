@@ -210,6 +210,20 @@ namespace Ember {
 		UploadUniformInt(name, value);
     }
 
+    void OpenGLShader::SetFloat(const std::string &name, const float &value)
+    {
+		EMBER_PROFILE_FUNCTION();
+
+		UploadUniformFloat(name, value);
+    }
+
+	void OpenGLShader::SetFloat2(const std::string &name, const glm::vec2 &value)
+	{
+		EMBER_PROFILE_FUNCTION();
+		
+		UploadUniformFloat2(name, value);
+	}
+
     void OpenGLShader::SetFloat3(const std::string &name, const glm::vec3 &value)
     {
 		EMBER_PROFILE_FUNCTION();
@@ -224,13 +238,30 @@ namespace Ember {
 		UploadUniformFloat4(name, value);
     }
 
+    void OpenGLShader::SetMat3(const std::string &name, const glm::mat3 &value)
+    {
+		EMBER_PROFILE_FUNCTION();
+
+		UploadUniformMat3(name, value);
+    }
+
     void OpenGLShader::SetMat4(const std::string &name, const glm::mat4 &value)
     {
 		EMBER_PROFILE_FUNCTION();
 		
 		UploadUniformMat4(name, value);
     }
-	
+
+    void OpenGLShader::bb()
+    {
+		// TODO: Implement
+    }
+
+    void OpenGLShader::cc()
+    {
+		// TODO: Implement
+    }
+
     void OpenGLShader::UploadUniformInt(const std::string &name, int value)
     {
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());

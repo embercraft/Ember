@@ -15,6 +15,7 @@ GPU=false
 CLEAN=false
 LIB_TYPE="Static"
 ASSERTS="ON"
+PARALLEL=true
 
 # Parse arguments
 for arg in "$@"; do
@@ -34,6 +35,9 @@ for arg in "$@"; do
         ("a")
             ASSERTS="OFF"
             ;;
+        ("p")
+            PARALLEL=false
+            ;;
     esac
 done
 
@@ -42,6 +46,7 @@ echo " "
 echo -e "\033[34m#############################################\033[0m"
 echo -e "\033[34mRunning with the following properties:\033[0m"
 echo -e "\033[34mBuild Type: $BUILD_TYPE\033[0m"
+echo -e "\033[34mParallel Build: $PARALLEL\033[0m"
 echo -e "\033[34mClean Build: $CLEAN\033[0m"
 echo -e "\033[34mLibrary Type (Shared/Static): $LIB_TYPE\033[0m"
 echo -e "\033[34mGPU Support: $GPU\033[0m"
@@ -66,7 +71,11 @@ else
 fi
 
 # Build the project
-cmake --build build/ || exit $?
+if [ "$PARALLEL" = true ]; then
+    cmake --build build/ --config "$BUILD_TYPE" --parallel || exit $? # use: --parallel <number of threads> to specify the number of threads
+else
+    cmake --build build/ --config "$BUILD_TYPE" || exit $?
+fi
 
 # Set GPU support environment variables if necessary
 if [ "$GPU" = true ]; then
