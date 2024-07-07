@@ -18,8 +18,7 @@ ExampleLayer::ExampleLayer()
             0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
     };
 
-    Ember::Ref<Ember::VertexBuffer> vertexBuffer;
-    vertexBuffer.reset(Ember::VertexBuffer::Create(vertices, sizeof(vertices)));
+    Ember::Ref<Ember::VertexBuffer> vertexBuffer = Ember::VertexBuffer::Create(vertices, sizeof(vertices));
     Ember::BufferLayout layout = {
         { Ember::ShaderDataType::Float3, "a_Position" },
         { Ember::ShaderDataType::Float4, "a_Color" }
@@ -28,8 +27,7 @@ ExampleLayer::ExampleLayer()
     m_VertexArray->AddVertexBuffer(vertexBuffer);
 
     uint32_t indices[3] = { 0, 1, 2 };
-    Ember::Ref<Ember::IndexBuffer> indexBuffer;
-    indexBuffer.reset(Ember::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+    Ember::Ref<Ember::IndexBuffer> indexBuffer = Ember::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
     m_VertexArray->SetIndexBuffer(indexBuffer);
 
     m_SquareVA = Ember::VertexArray::Create();
@@ -41,8 +39,7 @@ ExampleLayer::ExampleLayer()
         -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
     };
 
-    Ember::Ref<Ember::VertexBuffer> squareVB;
-    squareVB.reset(Ember::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+    Ember::Ref<Ember::VertexBuffer> squareVB = Ember::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
     squareVB->SetLayout({
         { Ember::ShaderDataType::Float3, "a_Position" },
         { Ember::ShaderDataType::Float2, "a_TextCoord" }
@@ -51,8 +48,7 @@ ExampleLayer::ExampleLayer()
     m_SquareVA->AddVertexBuffer(squareVB);
 
     uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-    Ember::Ref<Ember::IndexBuffer> squareIB;
-    squareIB.reset(Ember::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+    Ember::Ref<Ember::IndexBuffer> squareIB = Ember::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
     m_SquareVA->SetIndexBuffer(squareIB);
 
     std::string vertexSrc = R"(
