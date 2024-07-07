@@ -3,6 +3,7 @@
         {
             "name": "Ember (Linux)",
             "includePath": [
+                "/usr/include/clang/19.0.0/**",
                 "${workspaceFolder}/Ember/**"
             ],
             "defines": [

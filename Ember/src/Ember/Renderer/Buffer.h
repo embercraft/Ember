@@ -2,6 +2,7 @@
 
 #include "Ember/Core/Core.h"
 #include <cstdint>
+#include <cstddef>
 
 namespace Ember {
 
@@ -31,15 +32,15 @@ namespace Ember {
 		return 0;
 	}
 
-	struct EMBER_API BufferElement
+	struct BufferElement
 	{
 		std::string Name;
 		ShaderDataType Type;
 		uint32_t Size;
-		uint32_t Offset;
+		std::size_t Offset;
 		bool Normalized;
 
-		BufferElement() {}
+		BufferElement() = default;
 
 		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
 			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
@@ -89,7 +90,7 @@ namespace Ember {
 	private:
 		void CalculateOffsetsAndStride()
 		{
-			uint32_t offset = 0;
+			std::size_t offset = 0;
 			m_Stride = 0;
 			for (auto& element : m_Elements)
 			{
