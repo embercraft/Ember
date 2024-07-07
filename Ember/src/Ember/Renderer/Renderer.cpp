@@ -3,6 +3,7 @@
 #include "Ember/Renderer/Renderer2D.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Renderer.h"
 
 namespace Ember {
 
@@ -10,12 +11,21 @@ namespace Ember {
 
 	void Renderer::Init()
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		RenderCommand::Init();
 		Renderer2D::Init();
 	}
 
-	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
-	{
+    void Renderer::Shutdown()
+    {
+		EMBER_PROFILE_FUNCTION();
+
+		Renderer2D::Shutdown();
+    }
+
+    void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+    {
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 

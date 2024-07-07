@@ -23,16 +23,22 @@ namespace Ember {
 
 	LinuxWindow::LinuxWindow(const WindowProps& props)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		Init(props);
 	}
 
 	LinuxWindow::~LinuxWindow()
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		Shutdown();
 	}
 
 	void LinuxWindow::Init(const WindowProps& props)
 	{
+		EMBER_PROFILE_FUNCTION();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -41,6 +47,8 @@ namespace Ember {
 		
 		if (!s_GLFWInitialized)
 		{
+			EMBER_PROFILE_SCOPE("glfwInit");
+
 			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
 			EMBER_CORE_ASSERT(success, "Could not intialize GLFW!");
@@ -48,7 +56,11 @@ namespace Ember {
 			s_GLFWInitialized = true;
 		}
 
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		{
+			EMBER_PROFILE_SCOPE("glfwCreateWindow");
+
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		}
 
 		m_Context = CreateScope<OpenGLContext>(m_Window);
 		m_Context->Init();
@@ -163,17 +175,23 @@ namespace Ember {
 
 	void LinuxWindow::Shutdown()
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		glfwDestroyWindow(m_Window);
 	}
 
 	void LinuxWindow::OnUpdate()
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
 
 	void LinuxWindow::SetVSync(bool enabled)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		if (enabled)
 			glfwSwapInterval(1);
 		else

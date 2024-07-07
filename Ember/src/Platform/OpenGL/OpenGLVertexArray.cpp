@@ -28,26 +28,36 @@ namespace Ember{
 	
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 	
 	void OpenGLVertexArray::Bind() const
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		glBindVertexArray(m_RendererID);
 	}
 
 	void OpenGLVertexArray::Unbind() const
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
 
@@ -70,6 +80,8 @@ namespace Ember{
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
 

@@ -17,6 +17,8 @@ namespace Ember {
 
 	Application::Application()
 	{
+		EMBER_PROFILE_FUNCTION();
+
 		EMBER_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -32,22 +34,31 @@ namespace Ember {
 
 	Application::~Application()
 	{
+		EMBER_PROFILE_FUNCTION();
+		
+		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
-	void Application::PushOverlay(Layer* layer)
+	void Application::PushOverlay(Layer* overlay)
 	{
-		m_LayerStack.PushOverlay(layer);
-		layer->OnAttach();
+		EMBER_PROFILE_FUNCTION();
+		
+		m_LayerStack.PushOverlay(overlay);
+		overlay->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
@@ -64,6 +75,8 @@ namespace Ember {
 
 	void Application::Run()
 	{
+		EMBER_PROFILE_FUNCTION();
+
 		while (m_Running)
 		{
 			double time = (float)glfwGetTime();
@@ -99,6 +112,8 @@ namespace Ember {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
@@ -106,12 +121,16 @@ namespace Ember {
 
 	bool Application::OnWindowMinimized(WindowMinimizedEvent& e)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		m_Minimized = true;
 		return false;
 	}
 
 	bool Application::OnWindowRestored(WindowRestoredEvent& e)
 	{
+		EMBER_PROFILE_FUNCTION();
+		
 		m_Minimized = false;
 		return false;
 	}

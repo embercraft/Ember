@@ -7,13 +7,18 @@
 	int main(int argc, char** argv)
 	{
 		Ember::Log::Init();
-		EMBER_CORE_TRACE("Initialized Log!");
-		EMBER_INFO("Initialized Log!");
+
+		EMBER_PROFILE_BEGIN_SESSION("Startup", "EmberProfile-Startup.json");
 		auto app = Ember::CreateApplication();
+		EMBER_PROFILE_END_SESSION();
+
+		EMBER_PROFILE_BEGIN_SESSION("Runtime", "EmberProfile-Runtime.json");
 		app->Run();
-		EMBER_ERROR("Application Closed");
+		EMBER_PROFILE_END_SESSION();
+		
+		EMBER_PROFILE_BEGIN_SESSION("Shutdown", "EmberProfile-Shutdown.json");
 		delete app;
-		return 0;
+		EMBER_PROFILE_END_SESSION();
 	}
 
 #endif
