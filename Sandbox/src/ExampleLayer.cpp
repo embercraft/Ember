@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define LOG_INPUT 0
 
 ExampleLayer::ExampleLayer()
     : Layer("Example"), m_CameraController(1280.0f / 720.0f, true)
@@ -196,10 +197,36 @@ void ExampleLayer::OnEvent(Ember::Event& event)
 
     m_CameraController.OnEvent(event);
 
-    // log keystrokes
-    // if(event.GetEventType() == Ember::EventType::KeyPressed)
-    // {
-    // 	Ember::KeyPressedEvent& e = (Ember::KeyPressedEvent&)event;
-    // 	EMBER_TRACE("{0}", (char)e.GetKeyCode());
-    // }
+    #if LOG_INPUT
+    {
+        // log keystrokes
+        if(event.GetEventType() == Ember::EventType::KeyPressed)
+        {
+            Ember::KeyPressedEvent& e = (Ember::KeyPressedEvent&)event;
+            EMBER_TRACE("{0}", (char)e.GetKeyCode());
+        }
+
+        // log mouse clicks
+        if(event.GetEventType() == Ember::EventType::MouseButtonPressed)
+        {
+            Ember::MouseButtonPressedEvent& e = (Ember::MouseButtonPressedEvent&)event;
+            EMBER_TRACE("Mouse button {0} pressed", e.GetMouseButton());
+        }
+
+        // log mouse movement
+        if(event.GetEventType() == Ember::EventType::MouseMoved)
+        {
+            Ember::MouseMovedEvent& e = (Ember::MouseMovedEvent&)event;
+            EMBER_TRACE("Mouse moved to {0}, {1}", e.GetX(), e.GetY());
+        }
+
+        // log mouse scroll
+        if(event.GetEventType() == Ember::EventType::MouseScrolled)
+        {
+            Ember::MouseScrolledEvent& e = (Ember::MouseScrolledEvent&)event;
+            EMBER_TRACE("Mouse scrolled by {0}, {1}", e.GetXOffset(), e.GetYOffset());
+        }
+    }
+    #endif
+
 }
