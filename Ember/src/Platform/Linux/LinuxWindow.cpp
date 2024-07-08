@@ -3,6 +3,8 @@
 
 #include "Ember/Core/Input.h"
 
+#include "Ember/Renderer/Renderer.h"
+
 #include "Ember/Events/ApplicationEvent.h"
 #include "Ember/Events/MouseEvent.h"
 #include "Ember/Events/KeyEvent.h"
@@ -11,16 +13,11 @@
 
 namespace Ember {
 	
-	static bool s_GLFWInitialized = false;
+	static uint32_t s_GLFWWindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
 		EMBER_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
-	}
-
-	Window* Window::Create(const WindowProps& props)
-	{
-		return new LinuxWindow(props);
 	}
 
 	LinuxWindow::LinuxWindow(const WindowProps& props)
@@ -47,7 +44,7 @@ namespace Ember {
 
 		EMBER_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 		
-		if (!s_GLFWInitialized)
+		if (s_GLFWWindowCount == 0)
 		{
 			EMBER_PROFILE_SCOPE("glfwInit");
 
@@ -55,16 +52,21 @@ namespace Ember {
 			int success = glfwInit();
 			EMBER_CORE_ASSERT(success, "Could not intialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
-			s_GLFWInitialized = true;
 		}
 
 		{
 			EMBER_PROFILE_SCOPE("glfwCreateWindow");
 
+			#if defined(EMBER_DEBUG)
+				if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+					glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+			#endif
+
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+			++s_GLFWWindowCount;
 		}
 
-		m_Context = CreateScope<OpenGLContext>(m_Window);
+		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -166,7 +168,7 @@ namespace Ember {
 				WindowMinimizedEvent event;
 				data.EventCallback(event);
 			}
-			else			  // Restored
+			else			// Restored
 			{
 				WindowRestoredEvent event;
 				data.EventCallback(event);
@@ -178,8 +180,16 @@ namespace Ember {
 	void LinuxWindow::Shutdown()
 	{
 		EMBER_PROFILE_FUNCTION();
-		
+
 		glfwDestroyWindow(m_Window);
+		--s_GLFWWindowCount;
+
+		if (s_GLFWWindowCount == 0)
+		{
+			EMBER_PROFILE_SCOPE("glfwTerminate");
+
+			glfwTerminate();
+		}
 	}
 
 	void LinuxWindow::OnUpdate()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ember/Core/Core.h"
+
 #include "Ember/Core/Window.h"
 #include "Ember/Core/LayerStack.h"
 #include "Ember/Events/Event.h"
@@ -9,6 +10,8 @@
 #include "Ember/Core/Timestep.h"
 
 #include "Ember/ImGui/ImGuiLayer.h"
+
+int main(int argc, char** argv);
 
 namespace Ember
 {
@@ -21,8 +24,6 @@ namespace Ember
 		
 		virtual ~Application();
 
-		void Run();
-
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
@@ -33,12 +34,14 @@ namespace Ember
 		inline static Application& Get() { return *s_Instance; }
 
 	private:
+		void Run();
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnWindowMinimized(WindowMinimizedEvent& e);
 		bool OnWindowRestored(WindowRestoredEvent& e);
-
-		std::unique_ptr<Window> m_Window;
+	
+	private:
+		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		bool m_Minimized = false;
@@ -47,6 +50,7 @@ namespace Ember
 
 	private:
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 	
 	};
 

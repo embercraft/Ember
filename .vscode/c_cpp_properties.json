@@ -9,7 +9,7 @@
             "defines": [
                 "EMBER_PLATFORM_LINUX",
                 "EMBER_BUILD_LIB",
-                "EMBER_ENABLE_ASSERTS"
+                "EMBER_DEBUG"
             ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",

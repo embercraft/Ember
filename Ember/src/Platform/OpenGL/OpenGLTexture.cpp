@@ -1,13 +1,12 @@
 #include "Emberpch.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
-#include <glad/glad.h>
 #include <stb_image.h>
 
 namespace Ember {
 
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-		: m_Width(width), m_Height(height) //, m_RendererID(0)
+		: m_Width(width), m_Height(height)
 	{
 		EMBER_PROFILE_FUNCTION();
 		
@@ -25,7 +24,7 @@ namespace Ember {
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
-		: m_Path(path), m_Width(0), m_Height(0), m_RendererID(0)
+		: m_Path(path)
 	{
 		EMBER_PROFILE_FUNCTION();
 		

@@ -8,18 +8,6 @@
 
 namespace Ember {
 
-	void VertexBuffer::SetData(const void * data, uint32_t size)
-	{
-		switch (Renderer::GetAPI())
-		{
-			case RendererAPI::API::None:	EMBER_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return;
-			case RendererAPI::API::OpenGL:  return static_cast<OpenGLVertexBuffer*>(this)->SetData(data, size);
-			case RendererAPI::API::Vulkan:  EMBER_CORE_ASSERT(false, "RendererAPI::Vulkan is currently not supported!"); return;
-		}
-
-		EMBER_CORE_ASSERT(false, "Unknown RendererAPI!");
-	}
-
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
 		switch (Renderer::GetAPI())

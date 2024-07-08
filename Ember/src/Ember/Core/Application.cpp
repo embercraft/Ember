@@ -2,16 +2,12 @@
 #include "Ember/Core/Application.h"
 
 #include "Ember/Core/Log.h"
-
 #include "Ember/Renderer/Renderer.h"
-
 #include "Ember/Core/Input.h"
 
 #include <GLFW/glfw3.h>
 
 namespace Ember {
-
-	#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 	Application* Application::s_Instance = nullptr;
 
@@ -22,8 +18,8 @@ namespace Ember {
 		EMBER_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create());
-		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window = Window::Create();
+		m_Window->SetEventCallback(EMBER_BIND_EVENT_FN(Application::OnEvent));
 		// m_Window->SetVSync(false);
 
 		Renderer::Init();
@@ -60,10 +56,10 @@ namespace Ember {
 		EMBER_PROFILE_FUNCTION();
 		
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
-		dispatcher.Dispatch<WindowMinimizedEvent>(BIND_EVENT_FN(OnWindowMinimized));
-		dispatcher.Dispatch<WindowRestoredEvent>(BIND_EVENT_FN(OnWindowRestored));
+		dispatcher.Dispatch<WindowCloseEvent>(EMBER_BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(EMBER_BIND_EVENT_FN(Application::OnWindowResize));
+		dispatcher.Dispatch<WindowMinimizedEvent>(EMBER_BIND_EVENT_FN(Application::OnWindowMinimized));
+		dispatcher.Dispatch<WindowRestoredEvent>(EMBER_BIND_EVENT_FN(Application::OnWindowRestored));
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
@@ -81,6 +77,8 @@ namespace Ember {
 
 		while (m_Running)
 		{
+			EMBER_PROFILE_SCOPE("RunLoop");
+
 			double time = (float)glfwGetTime();
 			Timestep timestep = (time - m_LastFrameTime);
 			m_LastFrameTime = time;

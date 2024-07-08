@@ -161,7 +161,11 @@ namespace Ember {
 
 }
 
-#define EMBER_PROFILE 1
+#if EMBER_DEBUG
+	#define EMBER_PROFILE 0 // TODO: Change to 1
+#else
+	#define EMBER_PROFILE 0
+#endif
 
 #if EMBER_PROFILE
 

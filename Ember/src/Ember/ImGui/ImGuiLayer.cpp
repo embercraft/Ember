@@ -18,10 +18,6 @@ namespace Ember {
 	{
 	}
 
-	ImGuiLayer::~ImGuiLayer()
-	{
-	}
-
 	void ImGuiLayer::OnAttach()
 	{
 		EMBER_PROFILE_FUNCTION();

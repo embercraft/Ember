@@ -14,7 +14,7 @@ BUILD_TYPE="Debug"
 GPU=false
 CLEAN=false
 LIB_TYPE="Static"
-ASSERTS="ON"
+VERBOSE=false
 PARALLEL=true
 
 # Parse arguments
@@ -32,11 +32,15 @@ for arg in "$@"; do
         ("s")
             LIB_TYPE="Shared"
             ;;
-        ("a")
-            ASSERTS="OFF"
-            ;;
         ("p")
             PARALLEL=false
+            ;;
+        ("v")
+            VERBOSE=true
+            ;;
+        (*)
+            echo -e "\033[31mInvalid argument: $arg\033[0m"
+            # exit 1
             ;;
     esac
 done
@@ -47,6 +51,7 @@ echo -e "\033[34m#############################################\033[0m"
 echo -e "\033[34mRunning with the following properties:\033[0m"
 echo -e "\033[34mBuild Type: $BUILD_TYPE\033[0m"
 echo -e "\033[34mParallel Build: $PARALLEL\033[0m"
+ehco -e "\033[34mVerbose: $VERBOSE\033[0m"
 echo -e "\033[34mClean Build: $CLEAN\033[0m"
 echo -e "\033[34mLibrary Type (Shared/Static): $LIB_TYPE\033[0m"
 echo -e "\033[34mGPU Support: $GPU\033[0m"
@@ -65,16 +70,24 @@ fi
 
 # Create build directory
 if [ "$LIB_TYPE" = "Shared" ]; then
-    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
+    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" || exit $?
 else
-    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="OFF" -DEMBER_ENABLE_ASSERTS="$ASSERTS" || exit $?
+    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="OFF" || exit $?
 fi
 
 # Build the project
-if [ "$PARALLEL" = true ]; then
-    cmake --build build/ --config "$BUILD_TYPE" --parallel || exit $? # use: --parallel <number of threads> to specify the number of threads
+if [ "$VERBOSE" = true ]; then
+    if [ "$PARALLEL" = true ]; then
+        cmake --build build/ --config "$BUILD_TYPE" --parallel -- VERBOSE=1 || exit $? # For parallel build, use: --parallel <number of threads> to specify the number of threads, default is all
+    else
+        cmake --build build/ --config "$BUILD_TYPE" -- VERBOSE=1 || exit $? # For single threaded build
+    fi
 else
-    cmake --build build/ --config "$BUILD_TYPE" || exit $?
+    if [ "$PARALLEL" = true ]; then
+        cmake --build build/ --config "$BUILD_TYPE" --parallel || exit $? # For parallel build, use: --parallel <number of threads> to specify the number of threads, default is all
+    else
+        cmake --build build/ --config "$BUILD_TYPE" || exit $? # For single threaded build
+    fi
 fi
 
 # Set GPU support environment variables if necessary

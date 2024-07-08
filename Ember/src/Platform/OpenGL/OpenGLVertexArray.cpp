@@ -9,17 +9,17 @@ namespace Ember{
 	{
 		switch (type)
 		{
-			case Ember::ShaderDataType::Float:	return GL_FLOAT;
-			case Ember::ShaderDataType::Float2:   return GL_FLOAT;
-			case Ember::ShaderDataType::Float3:   return GL_FLOAT;
-			case Ember::ShaderDataType::Float4:   return GL_FLOAT;
-			case Ember::ShaderDataType::Mat3:	 return GL_FLOAT;
-			case Ember::ShaderDataType::Mat4:	 return GL_FLOAT;
-			case Ember::ShaderDataType::Int:	  return GL_INT;
-			case Ember::ShaderDataType::Int2:	 return GL_INT;
-			case Ember::ShaderDataType::Int3:	 return GL_INT;
-			case Ember::ShaderDataType::Int4:	 return GL_INT;
-			case Ember::ShaderDataType::Bool:	 return GL_BOOL;
+			case Ember::ShaderDataType::Float:		return GL_FLOAT;
+			case Ember::ShaderDataType::Float2:		return GL_FLOAT;
+			case Ember::ShaderDataType::Float3:		return GL_FLOAT;
+			case Ember::ShaderDataType::Float4:		return GL_FLOAT;
+			case Ember::ShaderDataType::Mat3:		return GL_FLOAT;
+			case Ember::ShaderDataType::Mat4:		return GL_FLOAT;
+			case Ember::ShaderDataType::Int:		return GL_INT;
+			case Ember::ShaderDataType::Int2:		return GL_INT;
+			case Ember::ShaderDataType::Int3:		return GL_INT;
+			case Ember::ShaderDataType::Int4:		return GL_INT;
+			case Ember::ShaderDataType::Bool:		return GL_BOOL;
 		}
 
 		EMBER_CORE_ASSERT(false, "Unknown ShaderDataType!");
@@ -61,18 +61,17 @@ namespace Ember{
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
 
-		uint32_t index = 0;
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index,
+			glEnableVertexAttribArray(m_VertexBufferIndex);
+			glVertexAttribPointer(m_VertexBufferIndex,
 				element.GetComponentCount(),
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
 				layout.GetStride(),
 				(const void*)element.Offset);
-			index++;
+			m_VertexBufferIndex++;
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);

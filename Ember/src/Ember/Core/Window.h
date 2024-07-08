@@ -25,9 +25,9 @@ namespace Ember {
 	class EMBER_API Window
 	{
 	public:
-		using EventCallbackFn = std::function<void(Ember::Event&)>;
+		using EventCallbackFn = std::function<void(Event&)>;
 
-		virtual ~Window() {}
+		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
 
@@ -41,7 +41,7 @@ namespace Ember {
 
 		virtual void* GetNativeWindow() const = 0;
 
-		static Window* Create(const WindowProps& props = WindowProps());
+		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
 
 }

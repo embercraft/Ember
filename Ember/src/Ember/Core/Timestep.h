@@ -18,5 +18,6 @@ namespace Ember {
 
 	private:
 		float m_Time;
+
 	};
 }

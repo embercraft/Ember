@@ -6,7 +6,6 @@
 
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
-#include "OpenGLShader.h"
 
 namespace Ember {
 
@@ -67,10 +66,18 @@ namespace Ember {
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
-			result.resize(in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&result[0], result.size());
-			in.close();
+			std::size_t size = in.tellg();
+			if (size != -1)
+			{
+				result.resize(size);
+				in.seekg(0, std::ios::beg);
+				in.read(&result[0], size);
+				in.close();
+			}
+			else
+			{
+				EMBER_CORE_ERROR("Could not read from file '{0}'", filepath);
+			}
 		}
 		else
 		{
@@ -88,18 +95,19 @@ namespace Ember {
 
 		const char* typeToken = "#type";
 		std::size_t typeTokenLength = strlen(typeToken);
-		std::size_t pos = source.find(typeToken, 0);
+		std::size_t pos = source.find(typeToken, 0); // Start of shader type declaration line
 		
 		while(pos != std::string::npos)
 		{
-			std::size_t eol = source.find_first_of("\r\n", pos);
+			std::size_t eol = source.find_first_of("\r\n", pos); // End of shader type declaration line
 			EMBER_CORE_ASSERT(eol != std::string::npos, "Syntax error");
-			std::size_t begin = pos + typeTokenLength + 1;
+			std::size_t begin = pos + typeTokenLength + 1; // Start of shader type name (after "#type" keyword)
 			std::string type = source.substr(begin, eol - begin);
 			EMBER_CORE_ASSERT(ShaderTypeFromString(type), "Invalid shader type specified");
 
-			std::size_t nextLinePos = source.find_first_not_of("\r\n", eol);
-			pos = source.find(typeToken, nextLinePos);
+			std::size_t nextLinePos = source.find_first_not_of("\r\n", eol); // Start of shader code after the current line
+			EMBER_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
+			pos = source.find(typeToken, nextLinePos); // Start of next shader type declaration line
 			ShaderSources[ShaderTypeFromString(type)] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
 		}
 
@@ -250,16 +258,6 @@ namespace Ember {
 		EMBER_PROFILE_FUNCTION();
 		
 		UploadUniformMat4(name, value);
-    }
-
-    void OpenGLShader::bb()
-    {
-		// TODO: Implement
-    }
-
-    void OpenGLShader::cc()
-    {
-		// TODO: Implement
     }
 
     void OpenGLShader::UploadUniformInt(const std::string &name, int value)

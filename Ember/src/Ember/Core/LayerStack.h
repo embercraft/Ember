@@ -10,7 +10,7 @@ namespace Ember
 	class EMBER_API LayerStack
 	{
 	public:
-		LayerStack();
+		LayerStack() = default;
 		~LayerStack();
 
 		void PushLayer(Layer* layer);
@@ -31,5 +31,6 @@ namespace Ember
 	private:
 		std::vector<Layer*> m_Layers;
 		unsigned int m_LayerInsertIndex = 0;
+
 	};
 }

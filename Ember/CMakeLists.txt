@@ -4,8 +4,12 @@ cmake_minimum_required(VERSION 3.20)
 # Define project and languages
 project(Ember CXX)
 
+# Set EMBER_DEBUG variable
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(EMBER_DEBUG 1)
+endif()
+
 # Define options
-option(EMBER_ENABLE_ASSERTS "Enable Debugging Assertions" ON)
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 # Set Options

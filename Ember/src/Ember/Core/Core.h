@@ -27,11 +27,15 @@
 	#error "Unsupported platform"
 #endif
 
+#ifdef EMBER_DEBUG
+	#define EMBER_ENABLE_ASSERTS
+#endif
+
 #ifdef EMBER_ENABLE_ASSERTS
 	#ifdef EMBER_PLATFORM_LINUX
 		#define EMBER_ASSERT(x, ...) { if(!(x)) { EMBER_ERROR("Assertion Failed: {0}", __VA_ARGS__); assert(x); } }
 		#define EMBER_CORE_ASSERT(x, ...) { if(!(x)) { EMBER_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); assert(x); } }
-	#elif defined(_WIN32)
+	#elif defined(EMBER_PLATFORM_WINDOWS)
 		#define EMBER_ASSERT(x, ...) { if(!(x)) { EMBER_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 		#define EMBER_CORE_ASSERT(x, ...) { if(!(x)) { EMBER_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 	#endif
