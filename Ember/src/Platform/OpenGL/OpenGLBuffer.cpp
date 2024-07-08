@@ -2,11 +2,12 @@
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
 #include <glad/glad.h>
+#include "OpenGLBuffer.h"
 
 namespace Ember {
 
 	/////////////////////////////////////////////////////////////////////////////////////
-	////					 Vertex Buffer Implementation							////
+	////					 Vertex Buffer Implementation							/////
 	/////////////////////////////////////////////////////////////////////////////////////
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
@@ -48,6 +49,12 @@ namespace Ember {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
+    void OpenGLVertexBuffer::SetData(const void *data, uint32_t size)
+    {
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+    } 
+	
 	/////////////////////////////////////////////////////////////////////////////////////
 	////					 Index Buffer Implementation							 ////
 	/////////////////////////////////////////////////////////////////////////////////////

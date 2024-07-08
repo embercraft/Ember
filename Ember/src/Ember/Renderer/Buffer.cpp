@@ -4,8 +4,21 @@
 #include "Ember/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/OpenGLBuffer.h"
+#include "Buffer.h"
 
 namespace Ember {
+
+	void VertexBuffer::SetData(const void * data, uint32_t size)
+	{
+		switch (Renderer::GetAPI())
+		{
+			case RendererAPI::API::None:	EMBER_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return;
+			case RendererAPI::API::OpenGL:  return static_cast<OpenGLVertexBuffer*>(this)->SetData(data, size);
+			case RendererAPI::API::Vulkan:  EMBER_CORE_ASSERT(false, "RendererAPI::Vulkan is currently not supported!"); return;
+		}
+
+		EMBER_CORE_ASSERT(false, "Unknown RendererAPI!");
+	}
 
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
@@ -34,12 +47,12 @@ namespace Ember {
 		return nullptr;
 	}
 
-	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t size)
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::None:	EMBER_CORE_ASSERT(false, "Renderer API::None is currently not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLIndexBuffer>(indices, size);
+			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLIndexBuffer>(indices, count);
 			case RendererAPI::API::Vulkan:  EMBER_CORE_ASSERT(false, "Renderer API::Vulkan is currently not supported!"); return nullptr;
 		}
 
