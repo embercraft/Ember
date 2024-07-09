@@ -4,11 +4,6 @@ cmake_minimum_required(VERSION 3.20)
 # Define project and languages
 project(Ember CXX)
 
-# Set EMBER_DEBUG variable
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(EMBER_DEBUG 1)
-endif()
-
 # Define options
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
@@ -102,10 +97,6 @@ if(UNIX AND NOT APPLE)
     target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_LINUX EMBER_BUILD_LIB)
 elseif(WIN32)
     target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_WINDOWS EMBER_BUILD_LIB)
-endif()
-
-if(EMBER_ENABLE_ASSERTS)
-    target_compile_definitions(Ember PRIVATE EMBER_ENABLE_ASSERTS)
 endif()
 
 # Link Libraries
