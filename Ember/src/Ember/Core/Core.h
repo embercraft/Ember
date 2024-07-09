@@ -27,9 +27,7 @@
 	#error "Unsupported platform"
 #endif
 
-#ifdef EMBER_DEBUG
-	#define EMBER_ENABLE_ASSERTS
-#endif
+#define EMBER_ENABLE_ASSERTS
 
 #ifdef EMBER_ENABLE_ASSERTS
 	#ifdef EMBER_PLATFORM_LINUX
