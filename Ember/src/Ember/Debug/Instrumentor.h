@@ -74,7 +74,7 @@ namespace Ember {
 			std::replace(name.begin(), name.end(), '"', '\'');
 
 			json << std::setprecision(3) << std::fixed;
-			json << "{";
+			json << ",{";
 			json << "\"cat\":\"function\",";
 			json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
 			json << "\"name\":\"" << name << "\",";
@@ -161,11 +161,7 @@ namespace Ember {
 
 }
 
-#if EMBER_DEBUG
-	#define EMBER_PROFILE 0 // TODO: Change to 1
-#else
-	#define EMBER_PROFILE 0
-#endif
+#define EMBER_PROFILE 0
 
 #if EMBER_PROFILE
 
