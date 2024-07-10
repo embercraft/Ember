@@ -6,8 +6,6 @@
 
 namespace Ember
 {
-	Scope<Input> Input::s_instance = CreateScope<LinuxInput>();
-
 	bool LinuxInput::IsKeyPressedImpl(KeyCode key)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
