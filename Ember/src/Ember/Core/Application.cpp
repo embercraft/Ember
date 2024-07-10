@@ -113,6 +113,8 @@ namespace Ember {
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
 		EMBER_PROFILE_FUNCTION();
+
+		EMBER_CORE_TRACE("WindowResizeEvent ({0}, {1})", e.GetWidth(), e.GetHeight());
 		
 		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 
