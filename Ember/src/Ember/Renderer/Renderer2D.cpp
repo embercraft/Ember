@@ -12,7 +12,7 @@ namespace Ember{
 	struct QuadVertex
 	{
 		glm::vec3 Position;
-		glm::vec4 Color;
+		glm::vec4 Colour;
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
@@ -136,6 +136,11 @@ namespace Ember{
 
     void Renderer2D::Flush()
     {
+		if(s_Data.QuadIndexCount == 0)
+		{
+			return;
+		}
+		
 		// Bind textures
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 		{
@@ -151,12 +156,12 @@ namespace Ember{
 	///									COLOURED QUAD							///
 	///////////////////////////////////////////////////////////////////////////////
 
-    void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4& colour)
 	{
-		DrawQuad({position.x, position.y, 0.0f}, size, color);
+		DrawQuad({position.x, position.y, 0.0f}, size, colour);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4& colour)
 	{
 		EMBER_PROFILE_FUNCTION();
 
@@ -171,33 +176,15 @@ namespace Ember{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
 							* glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[0];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[1];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[2];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[3];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+		for(int i = 0; i < 4; i++)
+		{
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
+			s_Data.QuadVertexBufferPtr->Colour = colour;
+			s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadVertexPosition[i] + 0.5f;
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr++;
+		}
 
 		s_Data.QuadIndexCount += 6;
 
@@ -208,12 +195,12 @@ namespace Ember{
 	///									TEXTURED QUAD							///
 	///////////////////////////////////////////////////////////////////////////////
 
-	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& colour)
 	{
-		DrawQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, color);
+		DrawQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, colour);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& colour)
 	{
 		EMBER_PROFILE_FUNCTION();
 
@@ -234,6 +221,11 @@ namespace Ember{
 
 		if (textureIndex == 0.0f)
 		{
+			if(s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+			{
+				StartNewBatch();
+			}
+
 			textureIndex = (float)s_Data.TextureSlotIndex;
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
@@ -242,33 +234,76 @@ namespace Ember{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 							* glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[0];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+		for(int i = 0; i < 4; i++)
+		{
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
+			s_Data.QuadVertexBufferPtr->Colour = colour;
+			s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadVertexPosition[i] + 0.5f;
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr++;
+		}
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[1];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+		s_Data.QuadIndexCount += 6;
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[2];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+		s_Data.Stats.QuadCount++;
+	}
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[3];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+	///////////////////////////////////////////////////////////////////////////////
+	///									SUBTEXTURE QUAD							///
+	///////////////////////////////////////////////////////////////////////////////
+
+	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const Ref<SubTexture2D> &subTexture, const float& tilingFactor, const glm::vec4& colour)
+	{
+		DrawQuad({position.x, position.y, 0.0f}, size, subTexture, tilingFactor, colour);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const Ref<SubTexture2D> &subTexture, const float& tilingFactor, const glm::vec4& colour)
+	{
+		EMBER_PROFILE_FUNCTION();
+
+		const glm::vec2* textureCoords = subTexture->GetTexCoords();
+		const Ref<Texture2D> texture = subTexture->GetTexture();
+
+		if(s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		{
+			StartNewBatch();
+		}
+
+		float textureIndex = 0.0f;
+		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+		{
+			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		if (textureIndex == 0.0f)
+		{
+			if(s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+			{
+				StartNewBatch();
+			}
+
+			textureIndex = (float)s_Data.TextureSlotIndex;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+			s_Data.TextureSlotIndex++;
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+							* glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
+
+		for(int i = 0; i < 4; i++)
+		{
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
+			s_Data.QuadVertexBufferPtr->Colour = colour;
+			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr++;
+		}
 
 		s_Data.QuadIndexCount += 6;
 
@@ -279,12 +314,12 @@ namespace Ember{
 	///								ROTATED COLOURED QUAD						///
 	///////////////////////////////////////////////////////////////////////////////
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float& rotation, const glm::vec4& color)
+	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float& rotation, const glm::vec4& colour)
 	{
-		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, color);
+		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, colour);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float& rotation, const glm::vec4& color)
+	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float& rotation, const glm::vec4& colour)
 	{
 		EMBER_PROFILE_FUNCTION();
 
@@ -300,33 +335,15 @@ namespace Ember{
 							* glm::rotate(glm::mat4(1.0f), rotation, {0.0f, 0.0f, 1.0f}) 
 							* glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[0];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+		for(int i = 0; i < 4; i++)
+		{
+		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
+		s_Data.QuadVertexBufferPtr->Colour = colour;
+		s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadVertexPosition[i] + 0.5f;;
 		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[1];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[2];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
-
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[3];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+		}
 
 		s_Data.QuadIndexCount += 6;
 
@@ -337,12 +354,12 @@ namespace Ember{
 	///								ROTATED TEXTURED QUAD						///
 	///////////////////////////////////////////////////////////////////////////////
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float& rotation, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& color)
+	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float& rotation, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& colour)
 	{
-		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, texture, tilingFactor, color);
+		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, texture, tilingFactor, colour);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float& rotation, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& color)
+	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float& rotation, const Ref<Texture2D> &texture, const float& tilingFactor, const glm::vec4& colour)
 	{
 		EMBER_PROFILE_FUNCTION();
 
@@ -363,6 +380,11 @@ namespace Ember{
 
 		if (textureIndex == 0.0f)
 		{
+			if(s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+			{
+				StartNewBatch();
+			}
+
 			textureIndex = (float)s_Data.TextureSlotIndex;
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
@@ -372,33 +394,77 @@ namespace Ember{
 							* glm::rotate(glm::mat4(1.0f), rotation, {0.0f, 0.0f, 1.0f}) 
 							* glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[0];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+		for(int i = 0; i < 4; i++)
+		{
+		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
+		s_Data.QuadVertexBufferPtr->Colour = colour;
+		s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadVertexPosition[i] + 0.5f;
 		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 		s_Data.QuadVertexBufferPtr++;
+		}
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[1];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+		s_Data.QuadIndexCount += 6;
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[2];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+		s_Data.Stats.QuadCount++;
+	}
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[3];
-		s_Data.QuadVertexBufferPtr->Color = color;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-		s_Data.QuadVertexBufferPtr++;
+	///////////////////////////////////////////////////////////////////////////////
+	///							ROTATED SUBTEXTURE QUAD							///
+	///////////////////////////////////////////////////////////////////////////////
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float& rotation, const Ref<SubTexture2D> &subTexture, const float& tilingFactor, const glm::vec4& colour)
+	{
+		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, subTexture, tilingFactor, colour);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float& rotation, const Ref<SubTexture2D> &subTexture, const float& tilingFactor, const glm::vec4& colour)
+	{
+		EMBER_PROFILE_FUNCTION();
+
+		const glm::vec2* textureCoords = subTexture->GetTexCoords();
+		const Ref<Texture2D> texture = subTexture->GetTexture();
+
+		if(s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		{
+			StartNewBatch();
+		}
+
+		float textureIndex = 0.0f;
+		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+		{
+			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		if (textureIndex == 0.0f)
+		{
+			if(s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+			{
+				StartNewBatch();
+			}
+
+			textureIndex = (float)s_Data.TextureSlotIndex;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+			s_Data.TextureSlotIndex++;
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+							* glm::rotate(glm::mat4(1.0f), rotation, {0.0f, 0.0f, 1.0f})
+							* glm::scale(glm::mat4(1.0f), glm::vec3(size, 1.0f));
+
+		for(int i = 0; i < 4; i++)
+		{
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
+			s_Data.QuadVertexBufferPtr->Colour = colour;
+			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr++;
+		}
 
 		s_Data.QuadIndexCount += 6;
 

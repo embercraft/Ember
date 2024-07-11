@@ -10,6 +10,10 @@ void Sandbox2D::OnAttach()
 	EMBER_PROFILE_FUNCTION();
 		
 	m_CheckerboardTexture = Ember::Texture2D::Create("assets/textures/Checkerboard.png");
+	m_SpriteSheet = Ember::Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
+	m_TextureStairs = Ember::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 7, 6 }, { 128, 128 });
+	m_TextureBarrel = Ember::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 8, 2 }, { 128, 128 });
+	m_TextureTree = Ember::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128, 128 }, { 1, 2 });
 }
 
 void Sandbox2D::OnDetach()
@@ -21,7 +25,7 @@ void Sandbox2D::OnUpdate(Ember::Timestep ts)
 {
 	EMBER_PROFILE_FUNCTION();
 
-	EMBER_CORE_INFO("Delta time: {0}s ({1}ms)", ts.GetSeconds(), ts.GetMilliseconds());
+	EMBER_CORE_INFO("Delta time: {0}ms ({1} fps)", ts.GetMilliseconds(), 1.0f / ts.GetSeconds());
 	
 	m_CameraController.OnUpdate(ts);
 
@@ -42,28 +46,18 @@ void Sandbox2D::OnUpdate(Ember::Timestep ts)
 
 		Ember::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-		Ember::Renderer2D::DrawQuad({1.5f, -0.5f}, {0.5f, 0.75f}, glm::vec4(0.8f, 0.2f, 0.3f, 1.0f));
-		Ember::Renderer2D::DrawQuad({0.0f, 0.0f}, {1.0f, 1.0f}, m_SquareColor);
-		Ember::Renderer2D::DrawQuad({0.0f, 0.0f, -0.99f}, {20.0f, 20.0f}, m_CheckerboardTexture, 10.0f);
-		Ember::Renderer2D::DrawRotatedQuad({-2.0f, 0.0f, 0.1f}, {1.0f, 1.0f}, glm::radians(45.0f), m_SquareColor);
-		Ember::Renderer2D::DrawRotatedQuad({0.0f, 0.0f, 0.1f}, {1.0f, 1.0f}, glm::radians(rotation), m_CheckerboardTexture, 100.0f);
-		// Ember::Renderer2D::DrawRotatedQuad({0.0f, 0.0f}, {1.0f, 1.0f}, glm::radians(45.0f), m_SquareColor);
+		// Ember::Renderer2D::DrawQuad({1.5f, -0.5f}, {0.5f, 0.75f}, glm::vec4(0.8f, 0.2f, 0.3f, 1.0f));
+		// Ember::Renderer2D::DrawQuad({0.0f, 0.0f}, {1.0f, 1.0f}, m_SquareColor);
+		// Ember::Renderer2D::DrawQuad({0.0f, 0.0f, -0.99f}, {20.0f, 20.0f}, m_CheckerboardTexture, 10.0f);
+		// Ember::Renderer2D::DrawRotatedQuad({-2.0f, 0.0f, 0.1f}, {1.0f, 1.0f}, glm::radians(45.0f), m_SquareColor);
+		// Ember::Renderer2D::DrawRotatedQuad({0.0f, 0.0f, 0.1f}, {1.0f, 1.0f}, glm::radians(rotation), m_CheckerboardTexture, 100.0f);
+
+		Ember::Renderer2D::DrawQuad({-2.0f, 0.0f, 0.5f}, {1.0f, 1.0f}, m_TextureStairs);
+		Ember::Renderer2D::DrawQuad({0.5f, -1.0f, 0.1f}, {1.0f, 1.0f}, m_TextureBarrel);
+		// Ember::Renderer2D::DrawQuad({2.0f, 0.0f, 0.5f}, {1.0f, 2.0f}, m_TextureTree);
+		Ember::Renderer2D::DrawRotatedQuad({2.0f, 0.0f, 0.1f}, {1.0f, 1.0f}, glm::radians(45.0f), m_TextureStairs, 20.0f);
 		
 		Ember::Renderer2D::EndScene();
-
-		// Ember::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-		// for(float y = -5.0; y < 5.0; y += 0.1f)
-		// {
-		// 	for(float x = -5.0; x < 5.0; x += 0.1f)
-		// 	{
-		// 		glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.5f };
-		// 		Ember::Renderer2D::DrawQuad({x, y}, {0.45f, 0.45f}, color);
-		// 	}
-		// }
-
-		// Ember::Renderer2D::EndScene();
-
 	}
 }
 
