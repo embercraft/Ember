@@ -413,12 +413,12 @@ namespace Ember{
 	///							ROTATED SUBTEXTURE QUAD							///
 	///////////////////////////////////////////////////////////////////////////////
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float& rotation, const Ref<SubTexture2D> &subTexture, const float& tilingFactor, const glm::vec4& colour)
+	void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const glm::vec2 &size, const float &rotation, const Ref<SubTexture2D> &subTexture, const float& tilingFactor, const glm::vec4& colour)
 	{
 		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, subTexture, tilingFactor, colour);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float& rotation, const Ref<SubTexture2D> &subTexture, const float& tilingFactor, const glm::vec4& colour)
+	void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const glm::vec2 &size, const float &rotation, const Ref<SubTexture2D> &subTexture, const float& tilingFactor, const glm::vec4& colour)
 	{
 		EMBER_PROFILE_FUNCTION();
 
@@ -470,7 +470,6 @@ namespace Ember{
 
 		s_Data.Stats.QuadCount++;
 	}
-
 
 	Renderer2D::Statistics Renderer2D::GetStats()
 	{
