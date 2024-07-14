@@ -1,11 +1,13 @@
 #pragma once
 
-#include "Ember/Core/Core.h"
+#include "Ember/Core/Base.h"
 
 namespace Ember {
 	class EMBER_API GraphicsContext
 	{
 	public:
+		virtual ~GraphicsContext() = default;
+
 		virtual void Init() = 0;
 		virtual void SwapBuffers() = 0;
 

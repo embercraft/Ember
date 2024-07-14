@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ember/Core/Core.h"
+#include "Ember/Core/Base.h"
 
 #include "Ember/Core/Window.h"
 #include "Ember/Core/LayerStack.h"
@@ -20,7 +20,7 @@ namespace Ember
 
 	public:
 		
-		Application();
+		Application(const std::string& name = "Ember App");
 		
 		virtual ~Application();
 
@@ -30,6 +30,10 @@ namespace Ember
 		void PushOverlay(Layer* overlay);
 
 		inline Window& GetWindow() { return *m_Window; }
+
+		void Close();
+
+		inline ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		inline static Application& Get() { return *s_Instance; }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ember/Core/Core.h"
+#include "Ember/Core/Base.h"
 
 #include "Ember/Renderer/OrthographicCamera.h"
 
@@ -21,6 +21,8 @@ namespace Ember {
 
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
+
+		void OnResize(float width, float height);
 
 		inline OrthographicCamera& GetCamera() { return m_Camera; }
 		inline const OrthographicCamera& GetCamera() const { return m_Camera; }

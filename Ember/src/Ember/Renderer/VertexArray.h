@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ember/Core/Core.h"
+#include "Ember/Core/Base.h"
 #include "Ember/Renderer/Buffer.h"
 
 #include <memory>

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(EmberEngine VERSION 1.0 LANGUAGES CXX C)
+project(Ember VERSION 1.0 LANGUAGES CXX C)
 
 # Set C++ Standard
 set(CMAKE_CXX_STANDARD 17)
@@ -72,6 +72,7 @@ endif()
 
 # Include subdirectories
 add_subdirectory(Ember)
+add_subdirectory(Foundry)
 add_subdirectory(Sandbox)
 
 # Set common compile options
@@ -94,8 +95,22 @@ function(set_common_compile_options target)
             -Wextra
             -pedantic
         >
+        $<$<CONFIG:RELWITHDEBINFO>:
+            -O2
+            -g
+            -Wall
+            -Wextra
+            -pedantic
+        >
+        $<$<CONFIG:MINSIZEREL>:
+            -Os
+            -Wall
+            -Wextra
+            -pedantic
+        >
     )
 endfunction()
 
+set_common_compile_options(EmberEngine)
+set_common_compile_options(Foundry)
 set_common_compile_options(Sandbox)
-set_common_compile_options(Ember)

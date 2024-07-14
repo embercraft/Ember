@@ -11,14 +11,14 @@ namespace Ember {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application()
+	Application::Application(const std::string& name)
 	{
 		EMBER_PROFILE_FUNCTION();
 
 		EMBER_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = Window::Create();
+		m_Window = Window::Create(WindowProps(name));
 		m_Window->SetEventCallback(EMBER_BIND_EVENT_FN(Application::OnEvent));
 		// m_Window->SetVSync(false);
 
@@ -51,8 +51,13 @@ namespace Ember {
 		overlay->OnAttach();
 	}
 
-	void Application::OnEvent(Event& e)
-	{
+    void Application::Close()
+    {
+		m_Running = false;
+    }
+
+    void Application::OnEvent(Event &e)
+    {
 		EMBER_PROFILE_FUNCTION();
 		
 		EventDispatcher dispatcher(e);

@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Ember/Core/Base.h"
 #include "Ember/Core/Log.h"
 #include "Ember/Debug/Instrumentor.h"
 

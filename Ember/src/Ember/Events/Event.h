@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ember/Core/Core.h"
+#include "Ember/Core/Base.h"
 
 namespace Ember 
 {
@@ -33,6 +33,8 @@ namespace Ember
 	class EMBER_API Event
 	{
 	public:
+		virtual ~Event() = default;
+
 		bool Handled = false;
 
 		virtual EventType GetEventType() const = 0;

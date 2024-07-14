@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ember/Core/Core.h"
+#include "Ember/Core/Base.h"
 #include "Ember/Renderer/Texture.h"
 
 #include <glad/glad.h>
@@ -16,6 +16,7 @@ namespace Ember {
 
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
+		virtual uint32_t GetRendererID() const override { return m_RendererID; }
 
 		virtual void SetData(void* data, uint32_t size) override;
 

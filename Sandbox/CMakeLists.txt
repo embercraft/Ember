@@ -5,11 +5,11 @@ cmake_minimum_required(VERSION 3.20)
 project(Sandbox CXX)
 
 # Define executable sources
-file(GLOB_RECURSE SANDBOX_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-file(GLOB_RECURSE SANDBOX_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
+file(GLOB_RECURSE SANDBOX_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE SANDBOX_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 
 # Create executable
-add_executable(Sandbox ${SANDBOX_SOURCES})
+add_executable(Sandbox ${SANDBOX_SOURCES} ${SANDBOX_HEADERS})
 
 # Set Output directory
 set_target_properties(Sandbox PROPERTIES
@@ -19,12 +19,15 @@ set_target_properties(Sandbox PROPERTIES
 )
 
 # Link Ember and other libraries
-target_link_libraries(Sandbox PRIVATE Ember glm ImGui)
+target_link_libraries(Sandbox PRIVATE EmberEngine)
 
 # Include directories
 target_include_directories(Sandbox
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/Vendor/spdlog/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/Vendor
+        ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/src
 )
 
 # Define preprocessor definitions

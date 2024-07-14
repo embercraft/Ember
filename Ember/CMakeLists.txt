@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 # Define project and languages
-project(Ember CXX)
+project(EmberEngine CXX)
 
 # Define options
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
@@ -11,14 +11,14 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build the GLFW documentation")
 
 # Define library sources
-file(GLOB_RECURSE EMBER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-file(GLOB_RECURSE EMBER_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
+file(GLOB_RECURSE EMBERENGINE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE EMBERENGINE_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 
 # Create library
 if(BUILD_SHARED_LIBS)
-    add_library(Ember SHARED ${EMBER_SOURCES} ${EMBER_HEADERS})
+    add_library(EmberEngine SHARED ${EMBERENGINE_SOURCES} ${EMBERENGINE_HEADERS})
 else()
-    add_library(Ember STATIC ${EMBER_SOURCES} ${EMBER_HEADERS})
+    add_library(EmberEngine STATIC ${EMBERENGINE_SOURCES} ${EMBERENGINE_HEADERS})
 endif()
 
 # Add subdirectory for dependencies
@@ -34,7 +34,7 @@ target_include_directories(stb_image INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Vendo
 target_sources(stb_image INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/stb_image/stb_image.cpp)
 
 # Include directories
-target_include_directories(Ember
+target_include_directories(EmberEngine
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/spdlog/include
@@ -45,11 +45,11 @@ target_include_directories(Ember
 )
 
 # Set output directories
-set_target_properties(Ember 
+set_target_properties(EmberEngine 
     PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/Ember/
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Ember/
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Ember/
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/EmberEngine/
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/EmberEngine/
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/EmberEngine/
 )
 
 set_target_properties(spdlog 
@@ -89,21 +89,30 @@ set_target_properties(glm
 
 # Find Packages
 find_package(OpenGL REQUIRED)
+find_package(Threads REQUIRED)
 
 # Define preprocessor definitions
-target_compile_definitions(Ember PRIVATE GLFW_INCLUDE_NONE)
+target_compile_definitions(EmberEngine PRIVATE GLFW_INCLUDE_NONE)
 
 if(UNIX AND NOT APPLE)
-    target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_LINUX EMBER_BUILD_LIB)
+    target_compile_definitions(EmberEngine PRIVATE EMBER_PLATFORM_LINUX EMBER_BUILD_LIB)
 elseif(WIN32)
-    target_compile_definitions(Ember PRIVATE EMBER_PLATFORM_WINDOWS EMBER_BUILD_LIB)
+    target_compile_definitions(EmberEngine PRIVATE EMBER_PLATFORM_WINDOWS EMBER_BUILD_LIB)
 endif()
 
-# Link Libraries
-target_link_libraries(Ember PRIVATE spdlog glfw dl pthread OpenGL::GL Glad ImGui glm stb_image)
+# Link libraries
+target_link_libraries(EmberEngine
+    PUBLIC
+        spdlog
+        glfw
+        Glad
+        ImGui
+        glm
+        ${CMAKE_DL_LIBS}
+        Threads::Threads
+        OpenGL::GL
+        stb_image
+)
 
 # Precompiled headers
-target_precompile_headers(Ember PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Emberpch.h)
-
-# Set C++ standard
-target_compile_features(Ember PUBLIC cxx_std_17)
+target_precompile_headers(EmberEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Emberpch.h)

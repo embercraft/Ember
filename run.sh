@@ -16,12 +16,19 @@ CLEAN=false
 LIB_TYPE="Static"
 VERBOSE=false
 PARALLEL=true
+FOUNDRY=true
 
 # Parse arguments
 for arg in "$@"; do
     case "${arg,,}" in
         ("r")
             BUILD_TYPE="Release"
+            ;;
+        ("mr")
+            BUILD_TYPE="MinSizeRel"
+            ;;
+        ("rd")
+            BUILD_TYPE="RelWithDebInfo"
             ;;
         ("g")
             GPU=true
@@ -37,6 +44,9 @@ for arg in "$@"; do
             ;;
         ("v")
             VERBOSE=true
+            ;;
+        ("e")
+            FOUNDRY=false
             ;;
         (*)
             echo -e "\033[31mInvalid argument: $arg\033[0m"
@@ -58,8 +68,12 @@ echo -e "\033[34mGPU Support: $GPU\033[0m"
 echo -e "\033[34m#############################################\033[0m"
 echo " "
 
-# Set the executable path based on the build type
-EXECUTABLE="./Sandbox"
+# Set the executable path
+if [ "$FOUNDRY" = true ]; then
+    EXECUTABLE="./Foundry"
+else
+    EXECUTABLE="./Sandbox"
+fi
 
 # Remove existing build directory if it exists and the clean flag is set
 if [ "$CLEAN" = true ]; then
@@ -101,13 +115,28 @@ if [ "$GPU" = true ]; then
     fi
 fi
 
-# Copy assets to the build directory
-echo -e "\033[34mCopying assets to the build directory.\033[0m"
-rm -rf "build/$BUILD_TYPE-$LIB_TYPE/Sandbox/assets" || { echo -e "\033[31mFailed to remove assets directory.\033[0m"; exit 1; }
-cp -r Sandbox/assets build/$BUILD_TYPE-$LIB_TYPE/Sandbox/ || { echo -e "\033[31mFailed to copy assets to the build directory.\033[0m"; exit 1; }
+if [ "$FOUNDRY" = true ]; then
+    # Copy assets to the build directory
+    echo -e "\033[34mCopying assets to the build directory.\033[0m"
+    rm -rf "build/$BUILD_TYPE-$LIB_TYPE/Foundry/assets" || { echo -e "\033[31mFailed to remove assets directory.\033[0m"; exit 1; }
+    cp -r Foundry/assets build/$BUILD_TYPE-$LIB_TYPE/Foundry/ || { echo -e "\033[31mFailed to copy assets to the build directory.\033[0m"; exit 1; }
 
-# Change to the build directory
-cd build/$BUILD_TYPE-$LIB_TYPE/Sandbox/ || { echo -e "\033[31mFailed to navigate to the build directory.\033[0m"; exit 1; }
+    # Change to the build directory
+    cd build/$BUILD_TYPE-$LIB_TYPE/Foundry/ || { echo -e "\033[31mFailed to navigate to the build directory.\033[0m"; exit 1; }
+else
+    # Copy assets to the build directory
+    echo -e "\033[34mCopying assets to the build directory.\033[0m"
+    rm -rf "build/$BUILD_TYPE-$LIB_TYPE/Sandbox/assets" || { echo -e "\033[31mFailed to remove assets directory.\033[0m"; exit 1; }
+    cp -r Sandbox/assets build/$BUILD_TYPE-$LIB_TYPE/Sandbox/ || { echo -e "\033[31mFailed to copy assets to the build directory.\033[0m"; exit 1; }
 
-# Run the executable 
+    # Change to the build directory
+    cd build/$BUILD_TYPE-$LIB_TYPE/Sandbox/ || { echo -e "\033[31mFailed to navigate to the build directory.\033[0m"; exit 1; }
+fi
+
+# Run the executable
+if [ "$FOUNDRY" = true ]; then
+    echo -e "\033[34mRunning Foundry.\033[0m"
+else
+    echo -e "\033[34mRunning Sandbox.\033[0m"
+fi
 "$EXECUTABLE"

@@ -21,8 +21,11 @@ namespace Ember {
 		void Begin();
 		void End();
 
+		void BlockEvents(bool block) { m_BlockEvents = block; }
+
 	private:
-		[[maybe_unused]] float m_Time = 0.0f;
+		bool m_BlockEvents = true;
+		float m_Time = 0.0f;
 	};
 
 }
