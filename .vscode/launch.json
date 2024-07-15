@@ -5,8 +5,8 @@
             "name": "(lldb) launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Debug-Static/Sandbox/Sandbox",
-            "cwd": "${workspaceFolder}/build/Debug-Static/Sandbox",
+            "program": "${workspaceFolder}/build/Debug-Static/Foundry/Foundry",
+            "cwd": "${workspaceFolder}/build/Debug-Static/Foundry",
             "stopAtEntry": false,
             "preLaunchTask": "Build Project",
             "externalConsole": false

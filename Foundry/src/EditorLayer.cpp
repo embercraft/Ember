@@ -17,16 +17,20 @@ namespace Ember
 	{
 		EMBER_PROFILE_FUNCTION();
 			
-		m_CheckerboardTexture = Ember::Texture2D::Create("assets/textures/Checkerboard.png");
-		m_SpriteSheet = Ember::Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
-		m_TextureStairs = Ember::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 7, 6 }, { 128, 128 });
-		m_TextureBarrel = Ember::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 8, 2 }, { 128, 128 });
-		m_TextureTree = Ember::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128, 128 }, { 1, 2 });
+		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
+		m_SpriteSheet = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
+		m_TextureStairs = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 7, 6 }, { 128, 128 });
+		m_TextureBarrel = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 8, 2 }, { 128, 128 });
+		m_TextureTree = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128, 128 }, { 1, 2 });
 
-		Ember::FramebufferSpecification fbSpec;
+		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
-		m_Framebuffer = Ember::Framebuffer::Create(fbSpec);
+		m_Framebuffer = Framebuffer::Create(fbSpec);
+
+		// Entity
+		auto squre = m_ActiveScene->CreateEntity("Green Square");
+		squre.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.3f, 0.8f, 1.0f });
 	}
 
 	void EditorLayer::OnDetach()
@@ -34,43 +38,38 @@ namespace Ember
 		EMBER_PROFILE_FUNCTION();
 	}
 
-	void EditorLayer::OnUpdate(Ember::Timestep ts)
+	void EditorLayer::OnUpdate(Timestep ts)
 	{
 		EMBER_PROFILE_FUNCTION();
 
+		if (Ember::FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
+			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		{
+			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+		}
+
 		EMBER_CORE_INFO("Delta time: {0}ms ({1} fps)", ts.GetMilliseconds(), 1.0f / ts.GetSeconds());
+
+		m_CameraController.OnUpdate(ts);
+
+		Renderer2D::ResetStats();
+
+		m_Framebuffer->Bind();
+		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+		RenderCommand::Clear();
+
+		Renderer2D::BeginScene(m_CameraController.GetCamera());
+
+		m_ActiveScene->OnUpdate(ts);
 		
-		if(m_ViewportFocused)
-		{
-			m_CameraController.OnUpdate(ts);
-		}
-
-		Ember::Renderer2D::ResetStats();
+		Renderer2D::EndScene();
 		
-		{
-			EMBER_PROFILE_SCOPE("Clear Screen");
-
-			m_Framebuffer->Bind();
-			Ember::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
-			Ember::RenderCommand::Clear();
-		}
-
-		{
-			EMBER_PROFILE_SCOPE("Render Scene");
-
-			static float rotation = 0.0f;
-			rotation += ts * 50.0f;
-
-			Ember::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-			Ember::Renderer2D::DrawQuad({0.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, m_SquareColor);
-			
-			Ember::Renderer2D::EndScene();
-			m_Framebuffer->Unbind();
-		}
+		m_Framebuffer->Unbind();
 	}
 
-	void EditorLayer::OnEvent(Ember::Event &e)
+	void EditorLayer::OnEvent(Event &e)
 	{
 		m_CameraController.OnEvent(e);
 	}
@@ -132,7 +131,7 @@ namespace Ember
 				// which we can't undo at the moment without finer window depth/z control.
 				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
 
-				if (ImGui::MenuItem("Exit")) Ember::Application::Get().Close();
+				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 				ImGui::EndMenu();
 			}
 
@@ -141,7 +140,7 @@ namespace Ember
 
 		ImGui::Begin("Settings");
 
-		auto stats = Ember::Renderer2D::GetStats();
+		auto stats = Renderer2D::GetStats();
 		ImGui::Text("Renderer2D Stats:");
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 		ImGui::Text("Quads: %d", stats.QuadCount);
@@ -152,20 +151,14 @@ namespace Ember
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		
+
 		ImGui::Begin("Viewport");
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
 		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
 		ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
-		if(m_ViewportSize != *((glm::vec2*)&ViewportPanelSize))
-		{
-			m_Framebuffer->Resize((uint32_t)ViewportPanelSize.x, (uint32_t)ViewportPanelSize.y);
-			m_ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
-
-			m_CameraController.OnResize(ViewportPanelSize.x, ViewportPanelSize.y);
-		}
+		m_ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		ImGui::End();

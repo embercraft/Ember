@@ -14,6 +14,12 @@
 
 #include "Ember/ImGui/ImGuiLayer.h"
 
+// ---ECS----------------------
+#include "Ember/Scene/Scene.h"
+#include "Ember/Scene/Components.h"
+#include "Ember/Scene/Entity.h"
+// ----------------------------
+
 // ---Renderer-----------------
 #include "Ember/Renderer/Renderer.h"
 #include "Ember/Renderer/Renderer2D.h"

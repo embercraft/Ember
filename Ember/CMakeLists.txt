@@ -27,6 +27,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/GLFW)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Glad)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/glm)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/EnTT)
 
 # Define stb_image target
 add_library(stb_image INTERFACE)
@@ -42,6 +43,7 @@ target_include_directories(EmberEngine
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Glad/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/glm/glm
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/EnTT/single_include
 )
 
 # Set output directories
@@ -112,6 +114,7 @@ target_link_libraries(EmberEngine
         Threads::Threads
         OpenGL::GL
         stb_image
+        EnTT
 )
 
 # Precompiled headers

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Ember/Core/Defines.h"
+
 #include <memory>
 
 #if defined(EMBER_PLATFORM_LINUX)
@@ -27,10 +29,9 @@
 	#error "Unsupported platform"
 #endif
 
-#define EMBER_ENABLE_ASSERTS
-
-#ifdef EMBER_ENABLE_ASSERTS
+#if EMBER_ENABLE_ASSERTS
 	#ifdef EMBER_PLATFORM_LINUX
+		#include <assert.h>
 		#define EMBER_ASSERT(x, ...) { if(!(x)) { EMBER_ERROR("Assertion Failed: {0}", __VA_ARGS__); assert(x); } }
 		#define EMBER_CORE_ASSERT(x, ...) { if(!(x)) { EMBER_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); assert(x); } }
 	#elif defined(EMBER_PLATFORM_WINDOWS)
