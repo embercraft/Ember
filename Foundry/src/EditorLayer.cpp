@@ -13,11 +13,6 @@ namespace Ember
 	{
 		EMBER_PROFILE_FUNCTION();
 		m_ActiveScene = CreateRef<Scene>();
-
-		m_SquareEntity = m_ActiveScene->CreateEntity("Square2");
-		m_SquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
-
-		m_CameraController.SetZoomLevel(5.0f); 
 	}
 
 	void EditorLayer::OnAttach()
@@ -34,6 +29,18 @@ namespace Ember
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
+
+		// Entity
+
+		m_SquareEntity = m_ActiveScene->CreateEntity("Blue Square");
+		m_SquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
+		m_CameraEntity.AddComponent<CameraComponent>();
+
+		m_SecondCamera = m_ActiveScene->CreateEntity("clip-space Camera");
+		m_SecondCamera.AddComponent<CameraComponent>();
+		m_SecondCamera.GetComponent<CameraComponent>().Primary = false;
 	}
 
 	void EditorLayer::OnDetach()
@@ -45,12 +52,15 @@ namespace Ember
 	{
 		EMBER_PROFILE_FUNCTION();
 
-		if (Ember::FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+		// Resize
+		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
 		EMBER_CORE_INFO("Delta time: {0}ms ({1} fps)", ts.GetMilliseconds(), 1.0f / ts.GetSeconds());
@@ -66,11 +76,7 @@ namespace Ember
 		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		RenderCommand::Clear();
 
-		Renderer2D::BeginScene(m_CameraController.GetCamera());
-
 		m_ActiveScene->OnUpdate(ts);
-		
-		Renderer2D::EndScene();
 		
 		m_Framebuffer->Unbind();
 	}
@@ -164,6 +170,35 @@ namespace Ember
 
 			ImGui::Separator();
 		}
+
+		ImGui::Text("Active Scene:");
+		if(m_PrimaryCamera)
+		{
+			ImGui::Text("Camera Entity: %s", m_CameraEntity.GetComponent<TagComponent>().Tag.c_str());
+			ImGui::DragFloat3("Camera Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+		}
+		else
+		{
+			ImGui::Text("Camera Entity: %s", m_SecondCamera.GetComponent<TagComponent>().Tag.c_str());
+			ImGui::DragFloat3("Camera Position", glm::value_ptr(m_SecondCamera.GetComponent<TransformComponent>().Transform[3]));
+		}
+
+		if(ImGui::Checkbox("Switch Camera", &m_PrimaryCamera))
+		{
+			m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+			m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+		}
+
+		{
+			auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
+			float orthoSize = camera.GetOrthographicSize();
+			if(ImGui::DragFloat("Second Camera ortho size", &orthoSize))
+			{
+				camera.SetOrthographicSize(orthoSize);
+			}
+		}
+
+		ImGui::Separator();
 
 		ImGui::End();
 

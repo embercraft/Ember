@@ -2,6 +2,7 @@
 
 #include "Ember/Core/Base.h"
 #include "Ember/Renderer/OrthographicCamera.h"
+#include "Ember/Renderer/Camera.h"
 #include "Ember/Renderer/RenderCommand.h"
 #include "Ember/Renderer/Texture.h"
 #include "Ember/Renderer/SubTexture2D.h"
@@ -14,7 +15,8 @@ namespace Ember {
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(const OrthographicCamera& camera);
+		static void BeginScene(const Camera& camera, const glm::mat4& transform);
+		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
 		static void EndScene();
 		static void Flush();
 

@@ -5,7 +5,6 @@
 #include "Ember/Renderer/Shader.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include "Renderer2D.h"
 
 namespace Ember{
 
@@ -111,6 +110,21 @@ namespace Ember{
 		EMBER_PROFILE_FUNCTION();
 	}
 
+	void Renderer2D::BeginScene(const Camera &camera, const glm::mat4 &transform)
+	{
+		EMBER_PROFILE_FUNCTION();
+
+		glm::mat4 viewProjection = camera.GetProjectionMatrix() * glm::inverse(transform);
+		
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProjection);
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
+	}
+
 	void Renderer2D::BeginScene(const OrthographicCamera &camera)
 	{
 		EMBER_PROFILE_FUNCTION();
@@ -134,8 +148,8 @@ namespace Ember{
 		Flush();
 	}
 
-    void Renderer2D::Flush()
-    {
+	void Renderer2D::Flush()
+	{
 		if(s_Data.QuadIndexCount == 0)
 		{
 			return;
@@ -150,14 +164,14 @@ namespace Ember{
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 
 		s_Data.Stats.DrawCalls++;
-    }
+	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	///									MATRIX QUAD								///
 	///////////////////////////////////////////////////////////////////////////////
 
-    void Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color)
-    {
+	void Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color)
+	{
 		EMBER_PROFILE_FUNCTION();
 
 		if(s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -181,10 +195,10 @@ namespace Ember{
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
-    }
+	}
 
-    void Renderer2D::DrawQuad(const glm::mat4 &transform, const Ref<Texture2D> &texture, const float &tilingFactor, const glm::vec4 &color)
-    {
+	void Renderer2D::DrawQuad(const glm::mat4 &transform, const Ref<Texture2D> &texture, const float &tilingFactor, const glm::vec4 &color)
+	{
 		EMBER_PROFILE_FUNCTION();
 
 		if(s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -227,7 +241,7 @@ namespace Ember{
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
-    }
+	}
 
 	void Renderer2D::DrawQuad(const glm::mat4 &transform, const Ref<SubTexture2D> &subTexture, const float &tilingFactor, const glm::vec4 &color)
 	{
@@ -282,7 +296,7 @@ namespace Ember{
 	///									COLORED QUAD							///
 	///////////////////////////////////////////////////////////////////////////////
 
-    void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4& color)
 	{
 		DrawQuad({position.x, position.y, 0.0f}, size, color);
 	}
@@ -393,12 +407,12 @@ namespace Ember{
 		memset(&s_Data.Stats, 0, sizeof(Statistics));
 	}
 
-    void Renderer2D::StartNewBatch()
-    {
+	void Renderer2D::StartNewBatch()
+	{
 		EndScene();
 
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 		s_Data.TextureSlotIndex = 1;
-    }
+	}
 }

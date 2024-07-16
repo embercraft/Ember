@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Ember/Core/Base.h"
-#include "Ember/Scene/Scene.h"
+#include "Ember/Scene/SceneCamera.h"
 
 #include <glm/glm.hpp>
 
@@ -57,6 +57,16 @@ namespace Ember
 			ss << "r: " << Color.r << ", g: " << Color.g << ", b: " << Color.b << ", a: " << Color.a;
 			return ss.str();
 		}
+	};
+
+	struct CameraComponent
+	{
+		SceneCamera Camera;
+		bool Primary = true; // TODO: Move to scene
+		bool FixedAspectRatio = false;
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
 	};
 
 }
