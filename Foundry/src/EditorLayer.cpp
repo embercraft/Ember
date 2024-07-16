@@ -55,7 +55,10 @@ namespace Ember
 
 		EMBER_CORE_INFO("Delta time: {0}ms ({1} fps)", ts.GetMilliseconds(), 1.0f / ts.GetSeconds());
 
-		m_CameraController.OnUpdate(ts);
+		if(m_ViewportFocused)
+		{
+			m_CameraController.OnUpdate(ts);
+		}
 
 		Renderer2D::ResetStats();
 
@@ -150,8 +153,18 @@ namespace Ember
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-		m_SquareEntity.UpdateComponent<SpriteRendererComponent>(m_SquareColor);
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+		if(m_SquareEntity)
+		{
+			ImGui::Separator();
+
+			std::string tag = m_SquareEntity.GetComponent<TagComponent>();
+			ImGui::Text("%s", tag.c_str());
+			m_SquareEntity.UpdateComponent<SpriteRendererComponent>(m_SquareColor);
+			ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+
+			ImGui::Separator();
+		}
+
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
