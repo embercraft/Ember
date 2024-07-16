@@ -4,6 +4,7 @@
 #include "Ember/Scene/SceneCamera.h"
 #include "Ember/Scene/ScriptableEntity.h"
 
+#include <sstream>
 #include <glm/glm.hpp>
 
 namespace Ember

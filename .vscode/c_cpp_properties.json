@@ -5,7 +5,8 @@
             "includePath": [
                 "/usr/include/clang/19.0.0/**",
                 "${workspaceFolder}/Ember/**",
-                "${workspaceFolder}/Ember/Vendor/**"
+                "${workspaceFolder}/Ember/Vendor/**",
+                "${workspaceFolder}/Foundry/**"
             ],
             "defines": [
                 "EMBER_PLATFORM_LINUX",

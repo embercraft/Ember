@@ -23,7 +23,7 @@ target_link_libraries(Foundry PRIVATE EmberEngine)
 
 # Include directories
 target_include_directories(Foundry
-    PRIVATE
+    PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/Vendor/spdlog/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/Vendor
@@ -39,9 +39,3 @@ endif()
 
 # Set C++ standard
 target_compile_features(Foundry PRIVATE cxx_std_17)
-
-add_custom_command(TARGET Foundry POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets
-    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Foundry/assets
-)

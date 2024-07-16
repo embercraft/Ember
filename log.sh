@@ -21,15 +21,15 @@ for arg in "$@"; do
 done
 
 # Construct the log file name
-log_file="log_${current_date}_${current_time}-${BUILD_TYPE}-${LIB_TYPE}.txt"
+log_file="log_${current_date}_${current_time}-${BUILD_TYPE}-${LIB_TYPE}.log"
 
 # Pass arguments to run.sh and capture the output
 script -q -c "./run.sh $*" "$log_file"
 
 # Remove ANSI color codes
-sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' "$log_file" > cleaned_log.txt
+sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' "$log_file" > cleaned_log.log
 rm "$log_file"
-mv cleaned_log.txt "$log_file"
+mv cleaned_log.log "$log_file"
 
 # Make a log directory if it doesn't exist
 mkdir -p logs
