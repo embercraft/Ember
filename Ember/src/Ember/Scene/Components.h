@@ -2,6 +2,7 @@
 
 #include "Ember/Core/Base.h"
 #include "Ember/Scene/SceneCamera.h"
+#include "Ember/Scene/ScriptableEntity.h"
 
 #include <glm/glm.hpp>
 
@@ -67,6 +68,21 @@ namespace Ember
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
+
+		ScriptableEntity*(*InstanciateScript)();
+		void(*DestroyScript)(NativeScriptComponent*);
+
+		template<typename T>
+		void Bind()
+		{
+			InstanciateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+		}
 	};
 
 }
