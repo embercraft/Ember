@@ -9,32 +9,13 @@
 
 namespace Ember
 {
-	Scene::Scene()
-	{
-	}
-
-	Scene::~Scene()
-	{
-	}
-
-	// Entity Scene::CreateEntity(const std::string& name)
-	// {
-	// 	Entity entity = { m_Registry.create(), this };
-	// 	entity.AddComponent<TransformComponent>();
-	// 	auto& tag = entity.GetComponent<TagComponent>();
-	// 	tag.Tag = name.empty() ? "Entity" : name;
-	// 	return entity;
-	// }
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-		entt::entity entityHandle = m_Registry.create();
-		Entity entity(entityHandle, this);
-		
+		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<TransformComponent>();
-		auto& tag = entity.AddComponent<TagComponent>();
+		auto& tag = entity.GetComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
-		
 		return entity;
 	}
 

@@ -43,6 +43,13 @@ namespace Ember
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
+		template<typename T, typename... Args>
+		T& UpdateComponent(Args&&... args)
+		{
+			EMBER_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			return m_Scene->m_Registry.replace<T>(m_EntityHandle, std::forward<Args>(args)...);
+		}
+
 		operator bool() const { return m_EntityHandle != entt::null; }
 
 	private:

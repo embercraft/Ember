@@ -12,15 +12,15 @@ namespace Ember
 	class EMBER_API Scene
 	{
 	public:
-		Scene();
-		~Scene();
+		Scene() = default;
+		~Scene() = default;
 
 		Entity CreateEntity(const std::string& name = std::string());
 
 		void OnUpdate(Timestep ts);
 
 	private:
-		entt::registry m_Registry;
+		entt::registry m_Registry{ };
 		friend class Entity;
 
 	};
