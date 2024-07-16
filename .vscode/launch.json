@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Debug-Static/Foundry/Foundry",
-            "cwd": "${workspaceFolder}/build/Debug-Static/Foundry",
+            "cwd": "${workspaceFolder}/Foundry",
             "stopAtEntry": false,
             "preLaunchTask": "Build Project",
             "externalConsole": false
