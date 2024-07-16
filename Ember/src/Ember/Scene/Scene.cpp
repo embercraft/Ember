@@ -14,6 +14,7 @@ namespace Ember
 	{
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<TransformComponent>();
+		entity.AddComponent<TagComponent>();
 		auto& tag = entity.GetComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 		return entity;

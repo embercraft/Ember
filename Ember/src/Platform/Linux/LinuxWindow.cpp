@@ -76,10 +76,10 @@ namespace Ember {
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-			data.Width = (uint)width;
-			data.Height = (uint)height;
+			data.Width = (uint32_t)width;
+			data.Height = (uint32_t)height;
 
-			WindowResizeEvent event((uint)width, (uint)height);
+			WindowResizeEvent event((uint32_t)width, (uint32_t)height);
 			data.EventCallback(event);
 		});
 

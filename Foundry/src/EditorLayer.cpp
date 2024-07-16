@@ -11,6 +11,13 @@ namespace Ember
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f, true)
 	{
+		EMBER_PROFILE_FUNCTION();
+		m_ActiveScene = CreateRef<Scene>();
+
+		m_SquareEntity = m_ActiveScene->CreateEntity("Square2");
+		m_SquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
+
+		m_CameraController.SetZoomLevel(5.0f); 
 	}
 
 	void EditorLayer::OnAttach()
@@ -27,10 +34,6 @@ namespace Ember
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
-
-		// Entity
-		auto squre = m_ActiveScene->CreateEntity("Green Square");
-		squre.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.3f, 0.8f, 1.0f });
 	}
 
 	void EditorLayer::OnDetach()
@@ -147,6 +150,7 @@ namespace Ember
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
+		m_SquareEntity.UpdateComponent<SpriteRendererComponent>(m_SquareColor);
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::End();
 
