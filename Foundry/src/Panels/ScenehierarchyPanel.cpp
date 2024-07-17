@@ -15,6 +15,7 @@ namespace Ember
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
+		m_SelectionContext = {};
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
@@ -50,7 +51,7 @@ namespace Ember
 		ImGui::Begin("Properties");
 		if (m_SelectionContext)
 		{
-			DrawComponents(m_SelectionContext);			
+			DrawComponents(m_SelectionContext);
 		}
 		ImGui::End();
 

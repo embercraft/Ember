@@ -13,9 +13,11 @@
 [submodule "Ember/Vendor/ImGui"]
 	path = Ember/Vendor/ImGui
 	url = https://github.com/rakshitx1/imgui
+
 [submodule "Ember/Vendor/EnTT"]
 	path = Ember/Vendor/EnTT
 	url = https://github.com/skypjack/entt
+
 [submodule "Ember/Vendor/yaml-cpp"]
 	path = Ember/Vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git

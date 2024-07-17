@@ -1,6 +1,7 @@
 #include "EditorLayer.h"
 
 #include "Ember/Scene/SceneSerializer.h"
+#include "Ember/Utils/PlatformUtils.h"
 
 #include <imgui.h>
 
@@ -126,11 +127,6 @@ namespace Ember
 		m_Framebuffer->Unbind();
 	}
 
-	void EditorLayer::OnEvent(Event &e)
-	{
-		m_CameraController.OnEvent(e);
-	}
-
 	void EditorLayer::OnImGuiRender()
 	{
 		EMBER_PROFILE_FUNCTION();
@@ -193,19 +189,62 @@ namespace Ember
 				// which we can't undo at the moment without finer window depth/z control.
 				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
 
-				if(ImGui::MenuItem("Serialize Scene"))
+				if(ImGui::MenuItem("New", "Ctrl+N"))
 				{
-					SceneSerializer serializer(m_ActiveScene);
-					serializer.Serialize("assets/scenes/ExampleScene.ember");
+					NewScene();
 				}
 
-				if(ImGui::MenuItem("Deserialize Scene"))
+				if(ImGui::MenuItem("Open...", "Ctrl+O"))
 				{
-					SceneSerializer serializer(m_ActiveScene);
-					serializer.Deserialize("assets/scenes/ExampleScene.ember");
+					OpenScene();
 				}
 
-				if (ImGui::MenuItem("Exit")) Application::Get().Close();
+				if(ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+				{
+					SaveSceneAs();
+				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Exit", "Alt+F4"))
+				{
+					Application::Get().Close();
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Theme"))
+			{
+				if(ImGui::MenuItem("Dark Theme"))
+				{
+					ImGuiLayer* imguiLayer = Application::Get().GetImGuiLayer();
+					imguiLayer->SetDarkTheme();
+				}
+				
+				if(ImGui::MenuItem("Catpuccin Theme"))
+				{
+					ImGuiLayer* imguiLayer = Application::Get().GetImGuiLayer();
+					imguiLayer->SetCatpuccinTheme();
+				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Classic Theme"))
+				{
+					ImGui::StyleColorsClassic();
+				}
+
+				if (ImGui::MenuItem("Classic Light Theme"))
+				{
+					ImGui::StyleColorsLight();
+				}
+
+				if (ImGui::MenuItem("Classic Dark Theme"))
+				{
+					ImGui::StyleColorsDark();
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -222,28 +261,6 @@ namespace Ember
 		ImGui::Text("Quads: %d", stats.QuadCount);
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-		if(ImGui::Button("Theme"))
-		{
-			ImGui::OpenPopup("ThemePopup");
-		}
-
-		if(ImGui::BeginPopup("ThemePopup"))
-		{
-			if(ImGui::MenuItem("Dark Theme"))
-			{
-				ImGuiLayer* imguiLayer = Application::Get().GetImGuiLayer();
-				imguiLayer->SetDarkTheme();
-				ImGui::CloseCurrentPopup();
-			}
-			if(ImGui::MenuItem("Catpuccin Theme"))
-			{
-				ImGuiLayer* imguiLayer = Application::Get().GetImGuiLayer();
-				imguiLayer->SetCatpuccinTheme();
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
 
 		ImGui::End();
 
@@ -262,6 +279,122 @@ namespace Ember
 		ImGui::PopStyleVar();
 
 		ImGui::End();
+	}
+
+	void EditorLayer::OnEvent(Event &e)
+	{
+		m_CameraController.OnEvent(e);
+
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<KeyPressedEvent>(EMBER_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+	{
+		if(e.GetRepeatCount() > 0)
+		{
+			return false;
+		}
+
+		bool control = Input::IsKeyPressed(KeyCode::LeftControl) || Input::IsKeyPressed(KeyCode::RightControl);
+		bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
+		bool alt = Input::IsKeyPressed(KeyCode::LeftAlt);
+		
+		switch (e.GetKeyCode())
+		{
+
+			case Key::N:
+			{
+				if(control)
+				{
+					NewScene();
+				}
+				break;
+			}
+
+			case Key::O:
+			{
+				if(control)
+				{
+					OpenScene();
+				}
+				break;
+			}
+
+			case Key::S:
+			{
+				if(control && shift)
+				{
+					SaveSceneAs();
+				}
+				break;
+			}
+
+			case Key::F4:
+			{
+				if(alt)
+				{
+					Application::Get().Close();
+				}
+				break;
+			}
+
+		}
+
+		return false;
+	}
+
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::optional<std::string> filePath = FileDialog::OpenFile("Ember Scene | *.ember");
+		if(filePath)
+		{
+			std::string path = *filePath;
+			if(path.length() >= 6 && path.substr(path.length() - 6) == ".ember")
+			{
+				m_ActiveScene = CreateRef<Scene>();
+				m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+				m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+				SceneSerializer serializer(m_ActiveScene);
+				serializer.Deserialize(path);
+			}
+			else
+			{
+				std::string fileName = *filePath;
+				std::size_t lastSlash = fileName.find_last_of("/");
+				if (lastSlash != std::string::npos)
+				{
+					fileName = fileName.substr(lastSlash + 1);
+				}
+				EMBER_ERROR("Failed to open scene file: {0}, Only .ember files can be loaded.", fileName);
+			}
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::optional<std::string> filePath = FileDialog::SaveFile("Ember Scene | *.ember");
+		if(filePath)
+		{
+			std::string path = *filePath;
+			
+			// Check if the file has the .ember extension, if not, add it
+			if(path.substr(path.find_last_of(".") + 1) != "ember")
+			{
+				path += ".ember";
+			}
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize(path);
+		}
 	}
 
 }
