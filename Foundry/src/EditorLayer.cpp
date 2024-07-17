@@ -174,11 +174,16 @@ namespace Ember
 
 		// DockSpace
 		ImGuiIO& io = ImGui::GetIO();
+		ImGuiStyle& style = ImGui::GetStyle();
+		float minWinSizeX = style.WindowMinSize.x;
+		style.WindowMinSize.x = 370.0;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+
+		style.WindowMinSize.x = minWinSizeX;
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -205,6 +210,28 @@ namespace Ember
 		ImGui::Text("Quads: %d", stats.QuadCount);
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+		if(ImGui::Button("Theme"))
+		{
+			ImGui::OpenPopup("ThemePopup");
+		}
+
+		if(ImGui::BeginPopup("ThemePopup"))
+		{
+			if(ImGui::MenuItem("Dark Theme"))
+			{
+				ImGuiLayer* imguiLayer = Application::Get().GetImGuiLayer();
+				imguiLayer->SetDarkTheme();
+				ImGui::CloseCurrentPopup();
+			}
+			if(ImGui::MenuItem("Catpuccin Theme"))
+			{
+				ImGuiLayer* imguiLayer = Application::Get().GetImGuiLayer();
+				imguiLayer->SetCatpuccinTheme();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
 
 		ImGui::End();
 
