@@ -4,11 +4,10 @@ cmake_minimum_required(VERSION 3.20)
 # Define project and languages
 project(EmberEngine CXX)
 
-# Define options
-option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
-
 # Set Options
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build the GLFW documentation")
+set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "Enable testing" FORCE)
+set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "Enable parse tools" FORCE)
 
 # Define library sources
 file(GLOB_RECURSE EMBERENGINE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
@@ -28,6 +27,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Glad)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/glm)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/EnTT)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/yaml-cpp)
 
 # Define stb_image target
 add_library(stb_image INTERFACE)
@@ -44,6 +44,7 @@ target_include_directories(EmberEngine
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/glm/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/EnTT/single_include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/yaml-cpp/include
 )
 
 # Set output directories
@@ -89,6 +90,13 @@ set_target_properties(glm
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/glm/
 )
 
+set_target_properties(yaml-cpp 
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/yaml-cpp/
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/yaml-cpp/
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/yaml-cpp/
+)
+
 # Find Packages
 find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
@@ -115,6 +123,7 @@ target_link_libraries(EmberEngine
         OpenGL::GL
         stb_image
         EnTT
+        yaml-cpp
 )
 
 # Precompiled headers

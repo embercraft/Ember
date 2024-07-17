@@ -1,5 +1,7 @@
 #include "EditorLayer.h"
 
+#include "Ember/Scene/SceneSerializer.h"
+
 #include <imgui.h>
 
 #include <glm/glm.hpp>
@@ -11,8 +13,6 @@ namespace Ember
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f, true)
 	{
-		EMBER_PROFILE_FUNCTION();
-		m_ActiveScene = CreateRef<Scene>();
 	}
 
 	void EditorLayer::OnAttach()
@@ -29,7 +29,7 @@ namespace Ember
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
-
+		m_ActiveScene = CreateRef<Scene>();
 		// Entity
 
 		m_SquareEntity = m_ActiveScene->CreateEntity("Blue Square");
@@ -108,7 +108,7 @@ namespace Ember
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
-		EMBER_CORE_INFO("Delta time: {0}ms ({1} fps)", ts.GetMilliseconds(), 1.0f / ts.GetSeconds());
+		// EMBER_CORE_INFO("Delta time: {0}ms ({1} fps)", ts.GetMilliseconds(), 1.0f / ts.GetSeconds());
 
 		if(m_ViewportFocused)
 		{
@@ -192,6 +192,18 @@ namespace Ember
 				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
 				// which we can't undo at the moment without finer window depth/z control.
 				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+
+				if(ImGui::MenuItem("Serialize Scene"))
+				{
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.Serialize("assets/scenes/ExampleScene.ember");
+				}
+
+				if(ImGui::MenuItem("Deserialize Scene"))
+				{
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.Deserialize("assets/scenes/ExampleScene.ember");
+				}
 
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 				ImGui::EndMenu();
