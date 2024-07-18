@@ -1,11 +1,12 @@
 #include "Emberpch.h"
 #include "Ember/ImGui/ImGuiLayer.h"
-
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-
 #include "Ember/Core/Application.h"
+
+#include <ImGui/imgui.h>
+#include <ImGui/backends/imgui_impl_glfw.h>
+#include <ImGui/backends/imgui_impl_opengl3.h>
+
+#include <ImGuizmo/ImGuizmo.h>
 
 // TEMPORARY
 #include <GLFW/glfw3.h>
@@ -82,6 +83,7 @@ namespace Ember {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()

@@ -3,7 +3,10 @@
 #include "Ember/Scene/SceneSerializer.h"
 #include "Ember/Utils/PlatformUtils.h"
 
-#include <imgui.h>
+#include "Ember/Math/Math.h"
+
+#include <ImGui/imgui.h>
+#include <ImGuizmo/ImGuizmo.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -31,60 +34,6 @@ namespace Ember
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 		m_ActiveScene = CreateRef<Scene>();
-		// Entity
-
-		m_SquareEntity = m_ActiveScene->CreateEntity("Blue Square");
-		m_SquareEntity.AddComponent<SpriteRendererComponent>(m_SquareColor);
-
-		auto redSquare = m_ActiveScene->CreateEntity("Red Square");
-		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{1.0f, 0.0f, 0.0f, 1.0f});
-
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-		m_CameraEntity.AddComponent<CameraComponent>();
-
-		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
-		m_SecondCamera.AddComponent<CameraComponent>();
-		m_SecondCamera.GetComponent<CameraComponent>().Primary = false;
-
-		class CameraController : public ScriptableEntity
-		{
-		public:
-			void OnCreate()
-			{
-				auto& translation = GetComponent<TransformComponent>().Translation;
-				translation.x = rand() % 10 - 5.0f;
-			}
-
-			void OnDestroy()
-			{
-			}
-
-			void OnUpdate(Timestep ts)
-			{
-				auto& translation = GetComponent<TransformComponent>().Translation;
-				float speed = 5.0f;
-
-				if(Input::IsKeyPressed(KeyCode::W))
-				{
-					translation.y += speed * ts;
-				}
-				if(Input::IsKeyPressed(KeyCode::S))
-				{
-					translation.y -= speed * ts;
-				}
-				if(Input::IsKeyPressed(KeyCode::A))
-				{
-					translation.x -= speed * ts;
-				}
-				if(Input::IsKeyPressed(KeyCode::D))
-				{
-					translation.x += speed * ts;
-				}
-			}
-		};
-
-		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
@@ -269,12 +218,59 @@ namespace Ember
 		ImGui::Begin("Viewport");
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
 		ImVec2 ViewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { ViewportPanelSize.x, ViewportPanelSize.y };
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		
+		// Gizmos
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if(selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			
+			float windowWidth = (float)ImGui::GetWindowWidth();
+			float windowHeight = (float)ImGui::GetWindowHeight();
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+			auto CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			const auto& camera = CameraEntity.GetComponent<CameraComponent>().Camera;
+			const glm::mat4& cameraProjection = camera.GetProjectionMatrix();
+			glm::mat4 cameraView = glm::inverse(CameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+			// Entity Transform
+			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = tc.GetTransform();
+
+			// Snapping
+			bool snap = Input::IsKeyPressed(KeyCode::LeftControl);
+			float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+			// Snap to 45 degrees for rotation
+			if(m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+			{
+				snapValue = 45.0f;
+			}
+
+			float snapValues[3] = {snapValue, snapValue, snapValue};
+
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
+
+			if(ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.Rotation;
+				tc.Translation = translation;
+				tc.Rotation += deltaRotation;
+				tc.Scale = scale;
+			}
+
+		}
+		
 		ImGui::End();
 		ImGui::PopStyleVar();
 
@@ -302,7 +298,7 @@ namespace Ember
 		
 		switch (e.GetKeyCode())
 		{
-
+			// File Operations
 			case Key::N:
 			{
 				if(control)
@@ -336,6 +332,31 @@ namespace Ember
 				{
 					Application::Get().Close();
 				}
+				break;
+			}
+
+			// Gizmo Controls
+			case Key::Q:
+			{
+				m_GizmoType = -1;
+				break;
+			}
+
+			case Key::W:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+			}
+
+			case Key::E:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			}
+
+			case Key::R:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
 			}
 

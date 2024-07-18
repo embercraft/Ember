@@ -25,6 +25,7 @@ target_link_libraries(Foundry PRIVATE EmberEngine)
 target_include_directories(Foundry
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/Vendor/ImGuizmo
         ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/Vendor/spdlog/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/Vendor
         ${CMAKE_CURRENT_SOURCE_DIR}/../Ember/src

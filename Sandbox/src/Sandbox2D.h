@@ -2,7 +2,7 @@
 
 #include "Ember.h"
 
-#include <imgui.h>
+#include <ImGui/imgui.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

@@ -28,6 +28,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGui)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/glm)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/EnTT)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/yaml-cpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo)
 
 # Define stb_image target
 add_library(stb_image INTERFACE)
@@ -38,6 +39,7 @@ target_sources(stb_image INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/stb_image/
 target_include_directories(EmberEngine
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor    
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/spdlog/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/GLFW/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Glad/include
@@ -45,6 +47,7 @@ target_include_directories(EmberEngine
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/glm/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/EnTT/single_include
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/yaml-cpp/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo
 )
 
 # Set output directories
@@ -97,6 +100,13 @@ set_target_properties(yaml-cpp
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/yaml-cpp/
 )
 
+set_target_properties(ImGuizmo 
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/ImGuizmo/
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ImGuizmo/
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ImGuizmo/
+)
+
 # Find Packages
 find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
@@ -118,13 +128,30 @@ target_link_libraries(EmberEngine
         Glad
         ImGui
         glm
-        ${CMAKE_DL_LIBS}
-        Threads::Threads
-        OpenGL::GL
         stb_image
         EnTT
         yaml-cpp
+        ImGuizmo
+        ${CMAKE_DL_LIBS}
+        Threads::Threads
+        OpenGL::GL
 )
 
 # Precompiled headers
 target_precompile_headers(EmberEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Emberpch.h)
+
+# Exclude specific files from using precompiled headers (PCH)
+target_sources(ImGuizmo PRIVATE
+    # ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/GraphEditor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImCurveEdit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImGradient.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImSequencer.cpp
+)
+set_source_files_properties(
+    # ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/GraphEditor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImCurveEdit.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImGradient.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImSequencer.cpp
+    PROPERTIES
+    COMPILE_FLAGS "-fno-implicit-templates"
+)

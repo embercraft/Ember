@@ -10,6 +10,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd "$SCRIPT_DIR" || { echo -e "\033[31mFailed to navigate to the script directory.\033[0m"; exit 1; }
 
 # Initialize variables
+NINJA=true
 BUILD_TYPE="Debug"
 GPU=false
 CLEAN=false
@@ -21,6 +22,9 @@ FOUNDRY=true
 # Parse arguments
 for arg in "$@"; do
     case "${arg,,}" in
+        ("n")
+            NINJA=false
+            ;;
         ("r")
             BUILD_TYPE="Release"
             ;;
@@ -30,8 +34,11 @@ for arg in "$@"; do
         ("rd")
             BUILD_TYPE="RelWithDebInfo"
             ;;
-        ("g")
-            GPU=true
+        ("p")
+            PARALLEL=false
+            ;;
+        ("v")
+            VERBOSE=true
             ;;
         ("c")
             CLEAN=true
@@ -39,11 +46,8 @@ for arg in "$@"; do
         ("s")
             LIB_TYPE="Shared"
             ;;
-        ("p")
-            PARALLEL=false
-            ;;
-        ("v")
-            VERBOSE=true
+        ("g")
+            GPU=true
             ;;
         ("e")
             FOUNDRY=false
@@ -59,21 +63,54 @@ done
 echo " "
 echo -e "\033[34m#############################################\033[0m"
 echo -e "\033[34mRunning with the following properties:\033[0m"
+echo -e "\033[34m#############################################\033[0m"
+
+# Check if Ninja is available
+if [ "$NINJA" = true ]; then
+    if ! ninja --version &> /dev/null; then
+        echo -e "\033[31mNinja not found.\033[0m"
+        echo -e "\033[31mFalling back to default build system.\033[0m"
+        NINJA=false
+    else
+        echo -e "\033[34mBuild System: Ninja\033[0m"
+    fi
+fi
+
 echo -e "\033[34mBuild Type: $BUILD_TYPE\033[0m"
 echo -e "\033[34mParallel Build: $PARALLEL\033[0m"
 echo -e "\033[34mVerbose: $VERBOSE\033[0m"
 echo -e "\033[34mClean Build: $CLEAN\033[0m"
 echo -e "\033[34mLibrary Type (Shared/Static): $LIB_TYPE\033[0m"
+
+# Set GPU support environment variables if necessary
+if [ "$GPU" = true ]; then
+    if ! nvidia-smi &> /dev/null; then
+        if ! rocm-smi &> /dev/null; then
+            echo -e "\033[31mNo NVIDIA or AMD GPU found.\033[0m"
+            echo -e "\033[31mRunning without GPU support.\033[0m"
+            GPU=false
+        else
+            export HSA_ENABLE_SDMA=0
+            export HSA_ENABLE_SDMA=1
+        fi
+    else
+        export __NV_PRIME_RENDER_OFFLOAD=1
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    fi
+fi
 echo -e "\033[34mGPU Support: $GPU\033[0m"
-echo -e "\033[34m#############################################\033[0m"
-echo " "
 
 # Set the executable path
 if [ "$FOUNDRY" = true ]; then
+    echo -e "\033[34mStartup Project: Foundry\033[0m"
     EXECUTABLE="./Foundry"
 else
+    echo -e "\033[34mStartup Project: Sandbox\033[0m"
     EXECUTABLE="./Sandbox"
 fi
+
+echo -e "\033[34m#############################################\033[0m"
+echo " "
 
 # Remove existing build directory if it exists and the clean flag is set
 if [ "$CLEAN" = true ]; then
@@ -82,52 +119,44 @@ if [ "$CLEAN" = true ]; then
     fi
 fi
 
-# Create build directory
+# Create build directory and configure project
 if [ "$LIB_TYPE" = "Shared" ]; then
-    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" || exit $?
+    if [ "$NINJA" = true ]; then
+        cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" -G Ninja || exit $?
+    else
+        cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="ON" || exit $?
+    fi
 else
-    cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="OFF" || exit $?
+    if [ "$NINJA" = true ]; then
+        cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="OFF" -G Ninja || exit $?
+    else
+        cmake -S . -B build/ -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_SHARED_LIBS="OFF" || exit $?
+    fi
 fi
 
 # Build the project
+BUILD_FLAGS=""
 if [ "$VERBOSE" = true ]; then
-    if [ "$PARALLEL" = true ]; then
-        cmake --build build/ --config "$BUILD_TYPE" --parallel -- VERBOSE=1 || exit $? # For parallel build, use: --parallel <number of threads> to specify the number of threads, default is all
+    if [ "$NINJA" = true ]; then
+        BUILD_FLAGS="-v"
     else
-        cmake --build build/ --config "$BUILD_TYPE" -- VERBOSE=1 || exit $? # For single threaded build
+        BUILD_FLAGS="-- VERBOSE=1"
     fi
+fi
+
+if [ "$PARALLEL" = true ]; then
+    cmake --build build/ --config "$BUILD_TYPE" --parallel $BUILD_FLAGS || exit $?
 else
-    if [ "$PARALLEL" = true ]; then
-        cmake --build build/ --config "$BUILD_TYPE" --parallel || exit $? # For parallel build, use: --parallel <number of threads> to specify the number of threads, default is all
-    else
-        cmake --build build/ --config "$BUILD_TYPE" || exit $? # For single threaded build
-    fi
+    cmake --build build/ --config "$BUILD_TYPE" $BUILD_FLAGS || exit $?
 fi
 
-# Set GPU support environment variables if necessary
-if [ "$GPU" = true ]; then
-    if ! nvidia-smi &> /dev/null; then
-        echo -e "\033[31mNVIDIA GPU not found.\033[0m"
-        echo -e "\033[31mRunning without GPU support.\033[0m"
-    else
-        export __NV_PRIME_RENDER_OFFLOAD=1
-        export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    fi
-fi
-
+# Change to the appropriate directory and run the executable
 if [ "$FOUNDRY" = true ]; then
-    # Change to Foundry folder
-    cd Foundry/ || { echo -e "\033[31mFailed to navigate to the build directory.\033[0m"; exit 1; }
-else
-    # Change to Sandbox folder
-    cd Sandbox/ || { echo -e "\033[31mFailed to navigate to the build directory.\033[0m"; exit 1; }
-fi
-
-# Run the executable
-if [ "$FOUNDRY" = true ]; then
+    cd Foundry/ || { echo -e "\033[31mFailed to navigate to the Foundry directory.\033[0m"; exit 1; }
     echo -e "\033[34mRunning Foundry.\033[0m"
     "../build/$BUILD_TYPE-$LIB_TYPE/Foundry/Foundry" || { echo -e "\033[31mFailed to run the executable.\033[0m"; exit 1; }
 else
+    cd Sandbox/ || { echo -e "\033[31mFailed to navigate to the Sandbox directory.\033[0m"; exit 1; }
     echo -e "\033[34mRunning Sandbox.\033[0m"
     "../build/$BUILD_TYPE-$LIB_TYPE/Sandbox/Sandbox" || { echo -e "\033[31mFailed to run the executable.\033[0m"; exit 1; }
 fi

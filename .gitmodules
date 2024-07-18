@@ -21,3 +21,7 @@
 [submodule "Ember/Vendor/yaml-cpp"]
 	path = Ember/Vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
+
+[submodule "Ember/Vendor/ImGuizmo"]
+	path = Ember/Vendor/ImGuizmo
+	url = https://github.com/Rakshitx1/ImGuizmo
