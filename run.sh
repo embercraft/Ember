@@ -49,7 +49,7 @@ for arg in "$@"; do
         ("g")
             GPU=true
             ;;
-        ("e")
+        ("f")
             FOUNDRY=false
             ;;
         (*)
@@ -92,13 +92,14 @@ if [ "$GPU" = true ]; then
         else
             export HSA_ENABLE_SDMA=0
             export HSA_ENABLE_SDMA=1
+            echo -e "\033[34mGPU: AMD\033[0m"
         fi
     else
         export __NV_PRIME_RENDER_OFFLOAD=1
         export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        echo -e "\033[34mGPU: NVIDIA\033[0m"
     fi
 fi
-echo -e "\033[34mGPU Support: $GPU\033[0m"
 
 # Set the executable path
 if [ "$FOUNDRY" = true ]; then
