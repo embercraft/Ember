@@ -5,23 +5,23 @@
 #include <memory>
 
 #if defined(EMBER_PLATFORM_LINUX)
-	#if defined(EMBER_BUILD_LIB) && defined(BUILD_SHARED_LIBS)
+	#if defined(BUILD_SHARED_LIBS)
 		// Export symbols in shared library build
 		#define EMBER_API __attribute__((visibility("default")))
 	#else
-		// No special attribute needed for import or static library build
+		// No special attribute needed for building/importing static library
 		#define EMBER_API
 	#endif
 #elif defined(EMBER_PLATFORM_WINDOWS)
 	#pragma message("Might not build, testing only on Linux")
-	#if defined(EMBER_BUILD_LIB) && defined(BUILD_SHARED_LIBS)
+	#if defined(BUILD_SHARED_LIBS)
 		// Export symbols in shared library build
 		#define EMBER_API __declspec(dllexport)
 	#elif defined(BUILD_SHARED_LIBS)
 		// Import symbols from shared library
 		#define EMBER_API __declspec(dllimport)
 	#else
-		// No special attribute needed for static library build
+		// No special attribute needed for building/importing static library
 		#define EMBER_API
 	#endif
 #else
@@ -63,4 +63,4 @@ namespace Ember {
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}
-} 
+}

@@ -115,9 +115,9 @@ find_package(Threads REQUIRED)
 target_compile_definitions(EmberEngine PRIVATE GLFW_INCLUDE_NONE)
 
 if(UNIX AND NOT APPLE)
-    target_compile_definitions(EmberEngine PRIVATE EMBER_PLATFORM_LINUX EMBER_BUILD_LIB)
+    target_compile_definitions(EmberEngine PRIVATE EMBER_PLATFORM_LINUX)
 elseif(WIN32)
-    target_compile_definitions(EmberEngine PRIVATE EMBER_PLATFORM_WINDOWS EMBER_BUILD_LIB)
+    target_compile_definitions(EmberEngine PRIVATE EMBER_PLATFORM_WINDOWS)
 endif()
 
 # Link libraries

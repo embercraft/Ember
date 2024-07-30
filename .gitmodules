@@ -25,3 +25,7 @@
 [submodule "Ember/Vendor/ImGuizmo"]
 	path = Ember/Vendor/ImGuizmo
 	url = https://github.com/Rakshitx1/ImGuizmo
+
+[submodule "Ember/Vendor/Glad"]
+	path = Ember/Vendor/Glad
+	url = https://github.com/rakshitx1/glad

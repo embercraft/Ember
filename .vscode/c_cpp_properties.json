@@ -3,60 +3,13 @@
         {
             "name": "Ember (Linux)",
             "includePath": [
-                "/usr/include/clang/19.0.0/**",
-                "${workspaceFolder}/Ember/**",
-                "${workspaceFolder}/Ember/Vendor/**",
-                "${workspaceFolder}/Foundry/**"
-            ],
-            "defines": [
-                "EMBER_PLATFORM_LINUX",
-                "EMBER_BUILD_LIB",
-                "EMBER_DEBUG"
+                "${workspaceFolder}/**"
             ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "linux-clang-x64"
-        },
-        {
-            "name": "Sandbox (Linux)",
-            "includePath": [
-                "${workspaceFolder}/Sandbox/**"
-            ],
-            "defines": [
-                "EMBER_PLATFORM_LINUX"
-            ],
-            "compilerPath": "/usr/bin/clang",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "linux-clang-x64"
-        },
-        {
-            "name": "Ember (Windows)",
-            "includePath": [
-                "${workspaceFolder}/Ember/**"
-            ],
-            "defines": [
-                "EMBER_PLATFORM_WINDOWS",
-                "EMBER_BUILD_LIB"
-            ],
-            "compilerPath": "C:\\path\\to\\your\\clang.exe",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "msvc-x64"
-        },
-        {
-            "name": "Sandbox (Windows)",
-            "includePath": [
-                "${workspaceFolder}/Sandbox/**"
-            ],
-            "defines": [
-                "EMBER_PLATFORM_WINDOWS"
-            ],
-            "compilerPath": "C:\\path\\to\\your\\clang.exe",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "msvc-x64"
+            "intelliSenseMode": "linux-clang-x64",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
         }
     ],
     "version": 4
