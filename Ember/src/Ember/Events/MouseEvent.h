@@ -3,6 +3,8 @@
 #include "Ember/Events/Event.h"
 #include "Ember/Core/Input.h"
 
+#include <sstream>
+
 namespace Ember {
 
 	class EMBER_API MouseMovedEvent : public Event

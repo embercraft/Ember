@@ -34,8 +34,11 @@ namespace Ember
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->SetName("Untitled Scene");
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 	}
 
 	void EditorLayer::OnDetach()
@@ -54,7 +57,7 @@ namespace Ember
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-
+			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
@@ -63,16 +66,17 @@ namespace Ember
 		if(m_ViewportFocused)
 		{
 			m_CameraController.OnUpdate(ts);
+			m_EditorCamera.OnUpdate(ts);
 		}
 
+		// Render
 		Renderer2D::ResetStats();
-
 		m_Framebuffer->Bind();
 		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		RenderCommand::Clear();
 
-		m_ActiveScene->OnUpdate(ts);
-		
+		// Update Scene
+		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 		m_Framebuffer->Unbind();
 	}
 
@@ -121,7 +125,7 @@ namespace Ember
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiStyle& style = ImGui::GetStyle();
 		float minWinSizeX = style.WindowMinSize.x;
-		style.WindowMinSize.x = 370.0;
+		style.WindowMinSize.x = 370.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
@@ -236,10 +240,18 @@ namespace Ember
 			float windowHeight = (float)ImGui::GetWindowHeight();
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-			auto CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			const auto& camera = CameraEntity.GetComponent<CameraComponent>().Camera;
-			const glm::mat4& cameraProjection = camera.GetProjectionMatrix();
-			glm::mat4 cameraView = glm::inverse(CameraEntity.GetComponent<TransformComponent>().GetTransform());
+			// Camera
+
+			// Runtime Camera from entity
+			// auto CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			// const auto& camera = CameraEntity.GetComponent<CameraComponent>().Camera;
+			// const glm::mat4& cameraProjection = camera.GetProjectionMatrix();
+			// glm::mat4 cameraView = glm::inverse(CameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+			// Editor Camera
+
+			const glm::mat4& cameraProjection = m_EditorCamera.GetProjectionMatrix();
+			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			// Entity Transform
 			auto& tc = selectedEntity.GetComponent<TransformComponent>();
@@ -280,6 +292,7 @@ namespace Ember
 	void EditorLayer::OnEvent(Event &e)
 	{
 		m_CameraController.OnEvent(e);
+		m_EditorCamera.OnEvent(e);
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(EMBER_BIND_EVENT_FN(EditorLayer::OnKeyPressed));

@@ -155,7 +155,7 @@ namespace Ember
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		out << YAML::Key << "Scene" << YAML::Value << m_Scene->GetName();
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		auto view = m_Scene->m_Registry.view<entt::entity>();
@@ -196,6 +196,7 @@ namespace Ember
 
 		std::string sceneName = data["Scene"].as<std::string>();
 		EMBER_CORE_TRACE("Deserializing scene '{0}'", sceneName);
+		m_Scene->SetName(sceneName);
 
 		auto entities = data["Entities"];
 		if (entities)
