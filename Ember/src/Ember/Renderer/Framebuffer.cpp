@@ -1,5 +1,6 @@
 #include "Emberpch.h"
 #include "Ember/Renderer/Framebuffer.h"
+#include "Ember/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 

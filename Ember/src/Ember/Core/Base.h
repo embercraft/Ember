@@ -29,21 +29,9 @@
 	#error "Unsupported platform"
 #endif
 
-#if EMBER_ENABLE_ASSERTS
-	#ifdef EMBER_PLATFORM_LINUX
-		#include <assert.h>
-		#define EMBER_ASSERT(x, ...) { if(!(x)) { EMBER_ERROR("Assertion Failed: {0}", __VA_ARGS__); assert(x); } }
-		#define EMBER_CORE_ASSERT(x, ...) { if(!(x)) { EMBER_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); assert(x); } }
-	#elif defined(EMBER_PLATFORM_WINDOWS)
-		#define EMBER_ASSERT(x, ...) { if(!(x)) { EMBER_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-		#define EMBER_CORE_ASSERT(x, ...) { if(!(x)) { EMBER_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-	#endif
-#else
-	#define EMBER_ASSERT(x, ...)
-	#define EMBER_CORE_ASSERT(x, ...)
-#endif
-
 #define BIT(x) (1 << x)
+#define EMBER_EXPAND_MACRO(x) x
+#define EMBER_STRINGIFY_MACRO(x) #x
 
 #define EMBER_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 
@@ -64,3 +52,6 @@ namespace Ember {
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}
 }
+
+#include "Ember/Core/Assert.h"
+#include "Ember/Core/Log.h"

@@ -23,7 +23,7 @@ namespace Ember
 		ImGui::Begin("Scene Hierarchy");
 
 		auto view = m_Context->m_Registry.view<entt::entity>();
-		ImGui::Text("Scene 1");
+		ImGui::Text("Scene: %s", m_Context->GetName().c_str());
 		view.each([&](auto entityID) {
 			Entity entity{ entityID, m_Context.get() };
 			DrawEntityNode(entity);

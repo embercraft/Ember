@@ -7,8 +7,6 @@
 #include "Ember/Events/Event.h"
 #include "Ember/Events/ApplicationEvent.h"
 
-#include "Ember/Core/Timestep.h"
-
 #include "Ember/ImGui/ImGuiLayer.h"
 
 int main(int argc, char** argv);

@@ -3,7 +3,7 @@
 
 #include "Ember/Core/Log.h"
 #include "Ember/Renderer/Renderer.h"
-#include "Ember/Core/Input.h"
+#include "Ember/Core/Timestep.h"
 
 #include <GLFW/glfw3.h>
 
