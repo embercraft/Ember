@@ -10,10 +10,10 @@ Ember is a versatile game engine under active development, designed for 2D and 3
 - [Features](#features)
 - [Installation](#installation)
 - [Upcoming Features](#upcoming-features)
-- [Known Issues](#known-issues)
 
 ## Features
 
+- **Telemetry**: Provides detailed logging of function calls, durations, and call hierarchy, viewable in a web browser.
 - **2D Rendering**: Utilizes an efficient OpenGL-based pipeline for 2D graphics.
 - **Batch Rendering**: Enhanced rendering performance through optimized batch processing.
 - **User Interface (UI)**: Intuitive interface for seamless interaction and development.
@@ -63,10 +63,9 @@ To get started with Ember Engine, follow these steps:
 
 ## Upcoming Features
 
+- **Tiling**: Enhancing the renderer with efficient tile-based rendering techniques for improved performance.
+- **Telemetry**: CPU and GPU telemetry support.
 - **Sound System**: Implementing audio capabilities for immersive game experiences.
 - **Hardware Profiling**: Integrating tools for monitoring and optimizing hardware performance.
 - **3D Rendering**: Expanding capabilities to include advanced 3D rendering features.
 - **Node-Based Visual Scripting**: Introducing a visual scripting system for intuitive game logic creation.
-
-## Known Issues
-- **Tiling Support for Texture Atlas**: Currently working on improving tiling support for texture atlases to enhance flexibility and usability.

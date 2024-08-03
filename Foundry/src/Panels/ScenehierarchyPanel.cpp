@@ -57,8 +57,13 @@ namespace Ember
 
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
-	{
+    void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+    {
+		m_SelectionContext = entity;
+    }
+
+    void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+    {
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth;

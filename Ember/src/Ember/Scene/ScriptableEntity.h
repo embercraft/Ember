@@ -7,7 +7,7 @@
 namespace Ember
 {
 
-	class ScriptableEntity //: public Entity
+	class ScriptableEntity
 	{
 	public:
 		ScriptableEntity() = default;
