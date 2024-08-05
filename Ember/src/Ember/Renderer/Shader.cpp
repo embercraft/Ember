@@ -4,7 +4,6 @@
 #include "Ember/Renderer/Shader.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
-
 namespace Ember {
 	
 	Ref<Shader> Shader::Create(const std::string& filepath)

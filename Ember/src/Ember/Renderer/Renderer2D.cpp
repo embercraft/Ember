@@ -3,8 +3,11 @@
 #include "Ember/Renderer/Renderer2D.h"
 #include "Ember/Renderer/VertexArray.h"
 #include "Ember/Renderer/Shader.h"
+#include "Ember/Renderer/UniformBuffer.h"
+#include "Ember/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Ember{
 
@@ -23,7 +26,7 @@ namespace Ember{
 	struct Renderer2DData
 	{
 		// Per draw call
-		static const uint32_t MaxQuads = 100000;				// TODO: Test this
+		static const uint32_t MaxQuads = 100000;			// TODO: Test this
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32; 		// TODO: RenderCaps
@@ -43,6 +46,13 @@ namespace Ember{
 		glm::vec4 QuadVertexPosition[4];
 
 		Renderer2D::Statistics Stats;
+
+		struct CameraData
+		{
+			glm::mat4 ViewProjection;
+		};
+		CameraData CameraBuffer;
+		Ref<UniformBuffer> CameraUniformBuffer;
 	};
 
 	static Renderer2DData s_Data;
@@ -97,8 +107,6 @@ namespace Ember{
 		}
 
 		s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("u_TextureSlots", samplers, s_Data.MaxTextureSlots);
 
 		// Set Texture slot 0 to white texture
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
@@ -107,6 +115,8 @@ namespace Ember{
 		s_Data.QuadVertexPosition[1] = { 0.5, -0.5, 0.0, 1.0};
 		s_Data.QuadVertexPosition[2] = { 0.5,  0.5, 0.0, 1.0};
 		s_Data.QuadVertexPosition[3] = {-0.5,  0.5, 0.0, 1.0};
+
+		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
 	}
 
 	void Renderer2D::Shutdown()
@@ -118,10 +128,8 @@ namespace Ember{
 	{
 		EMBER_PROFILE_FUNCTION();
 
-		glm::mat4 viewProjection = camera.GetProjectionMatrix() * glm::inverse(transform);
-		
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProjection);
+		s_Data.CameraBuffer.ViewProjection = camera.GetProjectionMatrix() * glm::inverse(transform);
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartNewBatch();
 	}
@@ -130,10 +138,8 @@ namespace Ember{
     {
 		EMBER_PROFILE_FUNCTION();
 
-		glm::mat4 viewProjection = camera.GetViewProjection();
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProjection);
+		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartNewBatch();
     }
@@ -171,6 +177,7 @@ namespace Ember{
 			s_Data.TextureSlots[i]->Bind(i);
 		}
 
+		s_Data.TextureShader->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 
 		s_Data.Stats.DrawCalls++;
@@ -438,3 +445,5 @@ namespace Ember{
 		s_Data.TextureSlotIndex = 1;
 	}
 }
+
+

@@ -3,13 +3,21 @@
         {
             "name": "Ember (Linux)",
             "includePath": [
-                "${workspaceFolder}/**"
+                // "/usr/include/clang/20.0.0/**",
+                // "${workspaceFolder}/Ember/**",
+                // "${workspaceFolder}/Ember/Vendor/**",
+                // "${workspaceFolder}/Foundry/**"
             ],
+            "defines": [
+                "EMBER_PLATFORM_LINUX",
+                "EMBER_BUILD_LIB",
+                "EMBER_DEBUG"
+            ],
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "linux-clang-x64",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+            "intelliSenseMode": "linux-clang-x64"
         }
     ],
     "version": 4

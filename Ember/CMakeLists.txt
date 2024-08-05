@@ -48,6 +48,7 @@ target_include_directories(EmberEngine
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/EnTT/single_include
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/yaml-cpp/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/VulkanSDK/1.3.283.0/x86_64/include
 )
 
 # Set output directories
@@ -111,6 +112,9 @@ set_target_properties(ImGuizmo
 find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
 
+# Set VulkanSDK lib path
+set(VULKAN_SDK_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/VulkanSDK/1.3.283.0/x86_64/lib)
+
 # Define preprocessor definitions
 target_compile_definitions(EmberEngine PRIVATE GLFW_INCLUDE_NONE)
 
@@ -135,6 +139,11 @@ target_link_libraries(EmberEngine
         ${CMAKE_DL_LIBS}
         Threads::Threads
         OpenGL::GL
+        ${VULKAN_SDK_LIB_PATH}/libvulkan.so
+        ${VULKAN_SDK_LIB_PATH}/libshaderc_combined.a
+        ${VULKAN_SDK_LIB_PATH}/libSPIRV-Tools.a
+        ${VULKAN_SDK_LIB_PATH}/libspirv-cross-core.a
+        ${VULKAN_SDK_LIB_PATH}/libspirv-cross-glsl.a
 )
 
 # Precompiled headers
@@ -147,6 +156,7 @@ target_sources(ImGuizmo PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImGradient.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImSequencer.cpp
 )
+
 set_source_files_properties(
     # ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/GraphEditor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo/ImCurveEdit.cpp

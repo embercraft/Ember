@@ -21,7 +21,7 @@ namespace Ember
 		}
 	};
 
-	Application* CreateApplication()
+	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
 		return new Foundry();
 	}

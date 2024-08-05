@@ -6,8 +6,31 @@ trap 'EXIT_STATUS=$?; if [ $EXIT_STATUS -eq 0 ]; then echo -e "\033[32mProgram e
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-# Navigate to the script directory
+# Navigate to the project directory
 cd "$SCRIPT_DIR" || { echo -e "\033[31mFailed to navigate to the script directory.\033[0m"; exit 1; }
+cd ../ || { echo -e "\033[31mFailed to navigate to the project directory.\033[0m"; exit 1; }
+
+# Function to create and set up the Python virtual environment
+setup_python_env() {
+    local venv_dir="$SCRIPT_DIR/../.venv"
+
+    # Check if the virtual environment already exists
+    if [ ! -d "$venv_dir" ]; then
+        echo "Creating virtual environment in $venv_dir"
+        python3 -m venv "$venv_dir" || { echo -e "\033[31mFailed to create virtual environment.\033[0m"; exit 1; }
+    fi
+
+    # Activate the virtual environment
+    source "$venv_dir/bin/activate"
+
+    # Install necessary Python packages
+    pip install --upgrade pip
+    pip install requests fake-useragent
+}
+
+setup_python_env
+
+./Scripts/Vulkan.py
 
 # Initialize variables
 NINJA=true
@@ -63,7 +86,7 @@ done
 echo " "
 echo -e "\033[34m#############################################\033[0m"
 echo -e "\033[34mRunning with the following properties:\033[0m"
-echo -e "\033[34m#############################################\033[0m"
+# echo -e "\033[34m#############################################\033[0m"
 
 # Check if Ninja is available
 if [ "$NINJA" = true ]; then
