@@ -13,12 +13,25 @@ int main(int argc, char** argv);
 
 namespace Ember
 {
+
+	struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char** Args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			EMBER_CORE_ASSERT(index < Count);
+			return Args[index];
+		}
+	};
+
 	class EMBER_API Application
 	{
 
 	public:
 		
-		Application(const std::string& name = "Ember App");
+		Application(const std::string& name = "Ember App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		
 		virtual ~Application();
 
@@ -35,6 +48,8 @@ namespace Ember
 
 		inline static Application& Get() { return *s_Instance; }
 
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+
 	private:
 		void Run();
 		bool OnWindowClose(WindowCloseEvent& e);
@@ -43,6 +58,7 @@ namespace Ember
 		bool OnWindowRestored(WindowRestoredEvent& e);
 	
 	private:
+		ApplicationCommandLineArgs m_CommandLineArgs;
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
@@ -53,10 +69,11 @@ namespace Ember
 	private:
 		static Application* s_Instance;
 		friend int ::main(int argc, char** argv);
+		friend class Server;
 	
 	};
 
 	// To be defined in CLIENT
-	Application* CreateApplication();
+	Application* CreateApplication(ApplicationCommandLineArgs args);
 
 }
