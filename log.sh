@@ -4,14 +4,29 @@
 current_date=$(date +"%Y-%m-%d")
 current_time=$(date +"%H:%M:%S")
 
+# Get the build type and library type
+BUILD_TYPE="Debug"
+LIB_TYPE="Static"
+# Parse arguments
+for arg in "$@"; do
+    case "${arg,,}" in
+        ("r")
+            BUILD_TYPE="Release"
+            ;;
+        ("mr")
+            BUILD_TYPE="MinSizeRel"
+            ;;
+        ("rd")
+            BUILD_TYPE="RelWithDebInfo"
+            ;;
+        ("s")
+            LIB_TYPE="Shared"
+            ;;
+    esac
+done
+
 # Construct the log file name
-log_file="log_${current_date}_${current_time}-${BUILD_TYPE}-${LIB_TYPE}.log"
-
-# Get the directory where this script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-# Navigate to the project directory
-cd "$SCRIPT_DIR" || { echo -e "\033[31mFailed to navigate to the script directory.\033[0m"; exit 1; }
+log_file="log_${current_date}_${current_time}_${BUILD_TYPE}_${LIB_TYPE}.log"
 
 # Pass arguments to run.sh and capture the output
 script -q -c "./run.sh $*" "$log_file"
