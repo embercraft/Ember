@@ -7,6 +7,8 @@
 namespace Ember
 {
 
+	extern const std::filesystem::path g_AssetPath;
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 		: m_Context(context)
 	{
@@ -399,6 +401,20 @@ namespace Ember
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [this, entity](auto& component)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+			ImGui::Button("Texture", ImVec2{ 100.0f, 0.0f });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const char* path = (const char*)payload->Data;
+					component.Texture = Texture2D::Create((std::filesystem::path(g_AssetPath) / path).string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 1.0f, 1.0f, 100.0f, "%.2f");
 		});
 
 	}

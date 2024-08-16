@@ -276,7 +276,6 @@ namespace Ember
 			ImGui::EndDragDropTarget();
 		}
 
-		
 		// Gizmos
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if(selectedEntity && m_GizmoType != -1)
