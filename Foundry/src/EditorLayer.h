@@ -2,8 +2,10 @@
 
 #include "Ember.h"
 #include "Panels/ScenehierarchyPanel.h"
-
+#include "Panels/ContentBrowserPanel.h"
 #include "Ember/Renderer/EditorCamera.h"
+
+#include <filesystem>
 
 namespace Ember
 {
@@ -26,6 +28,7 @@ namespace Ember
 
 		void NewScene();
 		void OpenScene();
+		void OpenScene(const std::filesystem::path& filePath);
 		void SaveSceneAs();
 
 	private:
@@ -59,6 +62,7 @@ namespace Ember
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 
 	};
 

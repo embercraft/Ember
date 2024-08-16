@@ -10,7 +10,7 @@ namespace Ember
 	{
 	public:
 		Foundry()
-			: Application("Foundry")
+			: Application("Foundry", "Resources/Icons/Logo/Foundry.png", 1920, 1080, ApplicationCommandLineArgs())
 		{
 			PushLayer(new EditorLayer());
 		}

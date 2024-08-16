@@ -35,7 +35,7 @@ namespace Ember {
 
 		struct WindowData
 		{
-			std::string Title;
+			std::string Title, FilePath;
 			unsigned int Width, Height;
 			bool VSync;
 
