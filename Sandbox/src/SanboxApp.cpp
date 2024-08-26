@@ -19,7 +19,7 @@ class Sandbox : public Ember::Application
 	}
 };
 
-Ember::Application* Ember::CreateApplication()
+Ember::Application* Ember::CreateApplication(ApplicationCommandLineArgs args)
 {
 	return new Sandbox();
 }

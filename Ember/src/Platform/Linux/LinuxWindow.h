@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Ember/Core/Base.h"
 #include "Ember/Core/Window.h"
 #include "Ember/Renderer/GraphicsContext.h"
 
@@ -35,7 +36,7 @@ namespace Ember {
 
 		struct WindowData
 		{
-			std::string Title;
+			std::string Title, FilePath;
 			unsigned int Width, Height;
 			bool VSync;
 

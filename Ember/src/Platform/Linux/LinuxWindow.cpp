@@ -11,13 +11,18 @@
 
 #include "Platform/OpenGL/OpenGLContext.h"
 
+#include <stb_image/stb_image.h>
+
 namespace Ember {
-	
+
 	static uint32_t s_GLFWWindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		EMBER_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+		if (!(error == 65548 && std::getenv("WAYLAND_DISPLAY")))
+		{
+			EMBER_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+		}
 	}
 
 	LinuxWindow::LinuxWindow(const WindowProps& props)
@@ -39,10 +44,24 @@ namespace Ember {
 		EMBER_PROFILE_FUNCTION();
 
 		m_Data.Title = props.Title;
+		m_Data.FilePath = props.filePath;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
 		EMBER_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+
+		if (std::getenv("WAYLAND_DISPLAY"))
+		{
+			EMBER_CORE_INFO("Running on Wayland display server");
+		}
+		else if (std::getenv("DISPLAY"))
+		{
+			EMBER_CORE_INFO("Running on X11 display server");
+		}
+		else
+		{
+			EMBER_CORE_WARN("No display server detected");
+		}		
 		
 		if (s_GLFWWindowCount == 0)
 		{
@@ -64,6 +83,20 @@ namespace Ember {
 
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 			++s_GLFWWindowCount;
+		}
+
+		{
+			EMBER_PROFILE_SCOPE("glfwSetWindowIcon");
+			// Set the window icon
+			GLFWimage icons[1];
+
+			if(m_Data.FilePath != "Default")
+			{
+				icons[0].pixels = stbi_load(m_Data.FilePath.c_str() , &icons[0].width, &icons[0].height, 0, 4);
+				EMBER_ASSERT(icons[0].pixels, "Failed to load icon!!");
+				glfwSetWindowIcon(m_Window, 1, icons);
+				stbi_image_free(icons[0].pixels);	
+			}
 		}
 
 		m_Context = GraphicsContext::Create(m_Window);

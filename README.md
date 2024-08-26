@@ -3,24 +3,36 @@
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Platform](https://img.shields.io/badge/platform-linux-lightgrey)
 
+![Banner](Resources/Banner.png)
+
 Ember is a versatile game engine under active development, designed for 2D and 3D game development. It aims to provide a robust rendering pipeline, intuitive user interface, and a powerful Entity Component System (ECS). Future plans include implementing a node-based visual scripting system to enhance usability and flexibility for developers.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Installation](#installation)
-- [Upcoming Features](#upcoming-features)
 
 ## Features
+
+### Currently Available
 
 - **Telemetry**: Provides detailed logging of function calls, durations, and call hierarchy, viewable in a web browser.
 - **2D Rendering**: Utilizes an efficient OpenGL-based pipeline for 2D graphics.
 - **Batch Rendering**: Enhanced rendering performance through optimized batch processing.
+- **Texture Atlas**: Supports texture atlases for efficient texture management and rendering.
 - **User Interface (UI)**: Intuitive interface for seamless interaction and development.
 - **Entity Component System (ECS)**: Flexible system for efficient game object management.
-- **3D Rendering**: Upcoming support for advanced 3D rendering and graphics capabilities.
-- **Node-Based Visual Scripting**: Future feature for creating game logic visually without traditional coding.
+
+### Coming Soon
+
+- **Command Line Interface (CLI)**: Enables real-time engine control and command execution directly from the terminal.
+- **3D Rendering**: Expanding capabilities to include advanced 3D rendering features.
+- **Node-Based Visual Scripting**: Introducing a visual scripting system for intuitive game logic creation.
+- **Tiling**: Enhancing the renderer with efficient tile-based rendering techniques for improved performance.
+- **Sound System**: Implementing audio capabilities for immersive game experiences.
+- **Hardware Profiling**: Integrating tools for monitoring and optimizing hardware performance.
 - **API**: Vulkan support is planned for upcoming updates.
+
 
 ### Installation
 
@@ -60,12 +72,3 @@ To get started with Ember Engine, follow these steps:
    ```
 
    For a detailed explanation of each argument and its effect on the build process, refer to the comments in `run.sh`.
-
-## Upcoming Features
-
-- **Tiling**: Enhancing the renderer with efficient tile-based rendering techniques for improved performance.
-- **Telemetry**: CPU and GPU telemetry support.
-- **Sound System**: Implementing audio capabilities for immersive game experiences.
-- **Hardware Profiling**: Integrating tools for monitoring and optimizing hardware performance.
-- **3D Rendering**: Expanding capabilities to include advanced 3D rendering features.
-- **Node-Based Visual Scripting**: Introducing a visual scripting system for intuitive game logic creation.

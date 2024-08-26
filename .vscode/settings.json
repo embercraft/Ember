@@ -35,6 +35,9 @@
         "ranges": "cpp",
         "span": "cpp",
         "stdexcept": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "filesystem": "cpp",
+        "*.ipp": "cpp",
+        "fstream": "cpp"
     }
 }

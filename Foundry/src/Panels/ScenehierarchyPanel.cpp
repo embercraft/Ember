@@ -1,11 +1,13 @@
 #include "Panels/ScenehierarchyPanel.h"
 
 #include <ImGui/imgui.h>
-#include <imgui_internal.h>
+#include <ImGui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Ember
 {
+
+	extern const std::filesystem::path g_AssetPath;
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 		: m_Context(context)
@@ -23,7 +25,40 @@ namespace Ember
 		ImGui::Begin("Scene Hierarchy");
 
 		auto view = m_Context->m_Registry.view<entt::entity>();
-		ImGui::Text("Scene: %s", m_Context->GetName().c_str());
+
+
+		bool renameScene = false;
+		std::string newSceneName = m_Context->GetName(); // Store the initial scene name in a temporary variable
+
+		if (renameScene)
+		{
+			// Show the input box when renaming is active
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			strncpy(buffer, newSceneName.c_str(), sizeof(buffer) - 1);
+			if (ImGui::InputText("##RenameScene", buffer, sizeof(buffer), ImGuiInputTextFlags_AutoSelectAll))
+			{
+				newSceneName = buffer;
+			}
+
+			// Optionally, detect when the user presses Enter to confirm the rename
+			if (ImGui::IsItemDeactivatedAfterEdit() || ImGui::IsKeyPressed(ImGuiKey_Enter))
+			{
+				m_Context->SetName(newSceneName); // Commit the new name
+				renameScene = false; // Hide the input box after renaming
+			}
+		}
+		else
+		{
+			// Make the "Scene: <scene name>" text clickable
+			if (ImGui::Selectable(("Scene: " + m_Context->GetName()).c_str()))
+			{
+				renameScene = true; // Switch to rename mode when clicked
+				newSceneName = m_Context->GetName(); // Initialize with the current scene name
+			}
+		}
+
+
 		view.each([&](auto entityID) {
 			Entity entity{ entityID, m_Context.get() };
 			DrawEntityNode(entity);
@@ -366,6 +401,20 @@ namespace Ember
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [this, entity](auto& component)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+			ImGui::Button("Texture", ImVec2{ 100.0f, 0.0f });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const char* path = (const char*)payload->Data;
+					component.Texture = Texture2D::Create((std::filesystem::path(g_AssetPath) / path).string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 1.0f, 1.0f, 100.0f, "%.2f");
 		});
 
 	}

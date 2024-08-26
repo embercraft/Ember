@@ -75,7 +75,7 @@ endif()
 # Include subdirectories
 add_subdirectory(Ember)
 add_subdirectory(Foundry)
-# add_subdirectory(Sandbox)
+add_subdirectory(Sandbox)
 
 # Set common compile options
 function(set_common_compile_options target)
@@ -115,4 +115,4 @@ endfunction()
 
 set_common_compile_options(EmberEngine)
 set_common_compile_options(Foundry)
-# set_common_compile_options(Sandbox)
+set_common_compile_options(Sandbox)

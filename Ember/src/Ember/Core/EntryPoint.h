@@ -7,7 +7,7 @@
 
 #include <thread>
 
-extern Ember::Application* Ember::CreateApplication(ApplicationCommandLineArgs args);
+	extern Ember::Application* Ember::CreateApplication(ApplicationCommandLineArgs args);
 
 int main(int argc, char** argv)
 {

@@ -12,11 +12,12 @@ namespace Ember {
 		std::string Title;
 		uint32_t Width;
 		uint32_t Height;
+		std::string filePath;
 
-		WindowProps(const std::string& title = "Ember Engine",
+		WindowProps(const std::string& title = "Ember Engine", const std::string& filepath = "Default",
 					uint32_t width = 1600,
 					uint32_t height = 900)
-			: Title(title), Width(width), Height(height)
+			: Title(title), filePath(filepath), Width(width), Height(height)
 		{
 		}
 	};
