@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Ember/Core/Base.h"
 #include "Ember/Core/Window.h"
 #include "Ember/Renderer/GraphicsContext.h"
 

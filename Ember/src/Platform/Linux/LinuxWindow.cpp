@@ -14,12 +14,15 @@
 #include <stb_image/stb_image.h>
 
 namespace Ember {
-	
+
 	static uint32_t s_GLFWWindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		EMBER_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+		if (!(error == 65548 && std::getenv("WAYLAND_DISPLAY")))
+		{
+			EMBER_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+		}
 	}
 
 	LinuxWindow::LinuxWindow(const WindowProps& props)
@@ -46,6 +49,19 @@ namespace Ember {
 		m_Data.Height = props.Height;
 
 		EMBER_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+
+		if (std::getenv("WAYLAND_DISPLAY"))
+		{
+			EMBER_CORE_INFO("Running on Wayland display server");
+		}
+		else if (std::getenv("DISPLAY"))
+		{
+			EMBER_CORE_INFO("Running on X11 display server");
+		}
+		else
+		{
+			EMBER_CORE_WARN("No display server detected");
+		}		
 		
 		if (s_GLFWWindowCount == 0)
 		{

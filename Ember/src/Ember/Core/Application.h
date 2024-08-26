@@ -30,8 +30,8 @@ namespace Ember
 	{
 
 	public:
-		
-		Application(const std::string& name = "Ember App", const std::string& filepath = "Default", int width = 1920, int height = 1080, ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
+
+		Application(const std::string& name = "Ember App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs(), int width = 1920, int height = 1080, const std::string& filepath = "Default");
 		
 		virtual ~Application();
 

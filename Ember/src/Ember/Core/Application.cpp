@@ -11,7 +11,7 @@ namespace Ember {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application(const std::string& name, const std::string& filepath, int width, int height, ApplicationCommandLineArgs args)
+	Application::Application(const std::string& name, ApplicationCommandLineArgs args, int width, int height, const std::string& filepath)
 		: m_CommandLineArgs(args)
 	{
 		EMBER_PROFILE_FUNCTION();
