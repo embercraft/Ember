@@ -30,7 +30,7 @@ namespace Ember
 	{
 
 	public:
-
+		
 		Application(const std::string& name = "Ember App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs(), int width = 1920, int height = 1080, const std::string& filepath = "Default");
 		
 		virtual ~Application();
@@ -69,6 +69,7 @@ namespace Ember
 	private:
 		static Application* s_Instance;
 		friend int ::main(int argc, char** argv);
+		friend class Server;
 	
 	};
 
