@@ -31,6 +31,14 @@ namespace Ember
 		void OpenScene(const std::filesystem::path& filePath);
 		void SaveSceneAs();
 
+		void OnSceneEdit();
+		void OnScenePlay();
+		void OnScenePause();
+		void OnSceneSimulate();
+
+		// UI Panels
+		void UI_Toolbar();
+
 	private:
 		OrthographicCameraController m_CameraController;
 
@@ -49,6 +57,7 @@ namespace Ember
 		Entity m_HoveredEntity;
 
 		bool m_PrimaryCamera = true;
+		bool m_FPS = false;
 
 		EditorCamera m_EditorCamera;
 
@@ -63,6 +72,18 @@ namespace Ember
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+
+		enum class SceneState
+		{
+			Edit = 0,
+			Play = 1,
+			Pause = 2,
+			Simulate = 3
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
+
+		Ref<Texture2D> m_IconPlay, m_IconStop;
 
 	};
 
