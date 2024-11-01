@@ -8,6 +8,8 @@ project(EmberEngine CXX)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build the GLFW documentation")
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "Enable testing" FORCE)
 set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "Enable parse tools" FORCE)
+set(BOX2D_BUILD_UNIT_TESTS OFF CACHE BOOL "Build the Box2D unit tests")
+set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "Build the Box2D testbed")
 
 # Define library sources
 file(GLOB_RECURSE EMBERENGINE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
@@ -29,6 +31,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/glm)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/EnTT)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/yaml-cpp)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Box2D)
 
 # Define stb_image target
 add_library(stb_image INTERFACE)
@@ -49,6 +52,7 @@ target_include_directories(EmberEngine
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/yaml-cpp/include
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/ImGuizmo
     ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/VulkanSDK/1.3.283.0/x86_64/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/Box2D/include
 )
 
 # Set output directories
@@ -108,6 +112,13 @@ set_target_properties(ImGuizmo
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ImGuizmo/
 )
 
+set_target_properties(box2d
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/Box2D/
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Box2D/
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Box2D/
+)
+
 # Find Packages
 find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
@@ -136,6 +147,7 @@ target_link_libraries(EmberEngine
         EnTT
         yaml-cpp
         ImGuizmo
+        box2d
         ${CMAKE_DL_LIBS}
         Threads::Threads
         OpenGL::GL

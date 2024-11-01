@@ -282,23 +282,39 @@ namespace Ember
 
 		if(ImGui::BeginPopup("AddComponent"))
 		{
-			if(!entity.HasComponent<CameraComponent>())
-			{
-				if(ImGui::MenuItem("Camera"))
+			if (!m_SelectionContext.HasComponent<CameraComponent>())
 				{
-					m_SelectionContext.AddComponent<CameraComponent>();
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Camera"))
+					{
+						m_SelectionContext.AddComponent<CameraComponent>();
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
 
-			if (!entity.HasComponent<SpriteRendererComponent>())
-			{
-				if(ImGui::MenuItem("Sprite Renderer"))
+				if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
 				{
-					m_SelectionContext.AddComponent<SpriteRendererComponent>();
-					ImGui::CloseCurrentPopup();
+					if (ImGui::MenuItem("Sprite Renderer"))
+					{
+						m_SelectionContext.AddComponent<SpriteRendererComponent>();
+						ImGui::CloseCurrentPopup();
+					}
 				}
-			}
+				if (!m_SelectionContext.HasComponent<RigidBody2DComponent>())
+				{
+					if (ImGui::MenuItem("Rigidbody 2D"))
+					{
+						m_SelectionContext.AddComponent<RigidBody2DComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+				}
+				if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
+				{
+					if (ImGui::MenuItem("Box Collider 2D"))
+					{
+						m_SelectionContext.AddComponent<BoxCollider2DComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+				}
 
 			ImGui::EndPopup();
 		}
@@ -409,7 +425,16 @@ namespace Ember
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
 					const char* path = (const char*)payload->Data;
-					component.Texture = Texture2D::Create((std::filesystem::path(g_AssetPath) / path).string());
+					std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
+					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+					if (texture->IsLoaded())
+					{
+						component.Texture = texture;
+					}
+					else
+					{
+						EMBER_WARN("Could not load texture {0}", texturePath.filename().string());
+					}
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -417,10 +442,38 @@ namespace Ember
 			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 1.0f, 1.0f, 100.0f, "%.2f");
 		});
 
-	}
+		DrawComponent<RigidBody2DComponent>("Rigidbody 2D", entity, [](auto& component)
+		{
+			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic"};
+			const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
+			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
+					if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
+					{
+						currentBodyTypeString = bodyTypeStrings[i];
+						component.Type = (RigidBody2DComponent::BodyType)i;
+					}
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+		});
 
-	void SceneHierarchyPanel::DrawAddComponent(Entity entity)
-	{
+		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+			ImGui::DragFloat2("Size", glm::value_ptr(component.Offset));
+			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+		});
+
 	}
 
 }

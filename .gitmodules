@@ -29,3 +29,7 @@
 [submodule "Ember/Vendor/Glad"]
 	path = Ember/Vendor/Glad
 	url = https://github.com/rakshitx1/glad
+
+[submodule "Ember/Vendor/Box2D"]
+	path = Ember/Vendor/Box2D
+	url = https://github.com/TheCherno/box2d

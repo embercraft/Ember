@@ -29,6 +29,7 @@ namespace Ember
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& filePath);
+		void Save();
 		void SaveSceneAs();
 
 		void OnSceneEdit();
@@ -84,6 +85,8 @@ namespace Ember
 		SceneState m_SceneState = SceneState::Edit;
 
 		Ref<Texture2D> m_IconPlay, m_IconStop;
+
+		std::filesystem::path m_ActiveSceneFilepath;		
 
 	};
 

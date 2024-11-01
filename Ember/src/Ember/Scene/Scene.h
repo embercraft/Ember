@@ -6,6 +6,8 @@
 
 #include <entt/entt.hpp>
 
+class b2World;
+
 namespace Ember
 {
 	class EMBER_API Entity; // Forward declaration
@@ -25,6 +27,10 @@ namespace Ember
 
 		Entity GetPrimaryCameraEntity();
 
+		void OnRuntimeStart();
+		void OnRuntimePause();
+		void OnRuntimeStop();
+
 		void SetName(const std::string& name) { Name = name; }
 		const std::string& GetName() const { return Name; }
 
@@ -36,7 +42,9 @@ namespace Ember
 		std::string Name;
 
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
-		
+
+		b2World* m_PhysicsWorld = nullptr;
+
 		entt::registry m_Registry{ };
 		friend class Entity;
 		friend class SceneHierarchyPanel;
