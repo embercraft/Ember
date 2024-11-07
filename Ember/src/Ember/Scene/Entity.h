@@ -2,6 +2,8 @@
 
 #include "Ember/Core/Base.h"
 #include "Ember/Scene/Scene.h"
+#include "Ember/Core/UUID.h"
+#include "Ember/Scene/Components.h"
 
 #include <entt/entt.hpp>
 
@@ -51,6 +53,8 @@ namespace Ember
 			EMBER_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
 			return m_Scene->m_Registry.replace<T>(m_EntityHandle, std::forward<Args>(args)...);
 		}
+
+		UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 
 		operator bool() const { return m_EntityHandle != entt::null; }
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }

@@ -2,9 +2,11 @@
 
 #include "Ember/Core/Base.h"
 #include "Ember/Scene/SceneCamera.h"
-#include "Ember/Scene/ScriptableEntity.h"
 #include "Ember/Renderer/Texture.h"
 
+#include "Ember/Core/UUID.h"
+
+#include <string>
 #include <sstream>
 
 #include <glm/glm.hpp>
@@ -14,6 +16,16 @@
 
 namespace Ember
 {
+
+	struct IDComponent
+	{
+		UUID ID;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+		IDComponent(const UUID& id)
+			: ID(id) {}
+	};
 
 	struct TagComponent
 	{
@@ -69,6 +81,7 @@ namespace Ember
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	class ScriptableEntity;
 	struct NativeScriptComponent
 	{
 		ScriptableEntity* Instance = nullptr;

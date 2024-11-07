@@ -434,6 +434,11 @@ namespace Ember
 
 			case Key::S:
 			{
+				if(control)
+				{
+					Save();
+				}
+
 				if(control && shift)
 				{
 					SaveSceneAs();

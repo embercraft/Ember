@@ -2,6 +2,7 @@
 #include "Ember/Scene/Scene.h"
 #include "Ember/Scene/Components.h"
 #include "Ember/Scene/Entity.h"
+#include "Ember/Scene/ScriptableEntity.h"
 
 #include "Ember/Renderer/Renderer2D.h"
 
@@ -11,6 +12,7 @@
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
+#include "Scene.h"
 
 namespace Ember
 {
@@ -37,16 +39,22 @@ namespace Ember
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-		Entity entity = { m_Registry.create(), this };
+		return CreateEntityWithUUID(UUID(), name);
+	}
+
+    Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string &name)
+    {
+        Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<TagComponent>();
 		auto& tag = entity.GetComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 		return entity;
-	}
+    }
 
-	void Scene::DestroyEntity(Entity entity)
-	{
+    void Scene::DestroyEntity(Entity entity)
+    {
 		m_Registry.destroy(entity);
 	}
 
@@ -228,11 +236,16 @@ namespace Ember
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
-		static_assert(false);
+		// static_assert(false);
 	}
 
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
 	{
 	}
 

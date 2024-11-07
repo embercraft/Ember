@@ -3,6 +3,7 @@
 #include "Ember/Core/Base.h"
 #include "Ember/Core/Timestep.h"
 #include "Ember/Renderer/EditorCamera.h"
+#include "Ember/Core/UUID.h"
 
 #include <entt/entt.hpp>
 
@@ -19,6 +20,7 @@ namespace Ember
 		~Scene();
 
 		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
 		void OnUpdateRuntime(Timestep ts);
