@@ -69,7 +69,6 @@ namespace Ember
 	private:
 		static Application* s_Instance;
 		friend int ::main(int argc, char** argv);
-		friend class Server;
 	
 	};
 

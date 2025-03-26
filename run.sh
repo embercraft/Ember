@@ -20,27 +20,11 @@ setup_python_env() {
     else
         echo "Virtual environment already exists in $venv_dir"
     fi
-
-    # Activate the virtual environment
-    source "$venv_dir/bin/activate"
-
-    # Check if necessary Python packages are already installed
-    if ! python -c "import requests" &> /dev/null; then
-        echo "Installing requests package"
-        pip install requests || { echo -e "\033[31mFailed to install requests package.\033[0m"; exit 1; }
-    else
-        echo "requests package is already installed"
-    fi
-
-    if ! python -c "import fake_useragent" &> /dev/null; then
-        echo "Installing fake-useragent package"
-        pip install fake-useragent || { echo -e "\033[31mFailed to install fake-useragent package.\033[0m"; exit 1; }
-    else
-        echo "fake-useragent package is already installed"
-    fi
 }
 
 setup_python_env
+
+./Scripts/Setup.py
 
 ./Scripts/Vulkan.py
 
@@ -179,8 +163,9 @@ if [ "$VERBOSE" = true ]; then
     fi
 fi
 
+NUM_CORES=$(nproc)
 if [ "$PARALLEL" = true ]; then
-    cmake --build build/ --config "$BUILD_TYPE" --parallel $BUILD_FLAGS || exit $?
+    cmake --build build/ --config "$BUILD_TYPE" --parallel "$NUM_CORES" $BUILD_FLAGS || exit $?
 else
     cmake --build build/ --config "$BUILD_TYPE" $BUILD_FLAGS || exit $?
 fi

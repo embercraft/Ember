@@ -1,10 +1,10 @@
-Scene: Untitled Scene
+Scene: Red Plane
 Entities:
   - Entity: 12837192831273
     TagComponent:
-      Tag: New Entity
+      Tag: Red Plane
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [2, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:

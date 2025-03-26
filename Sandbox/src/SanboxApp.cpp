@@ -8,6 +8,7 @@ class Sandbox : public Ember::Application
 {
 	public:
 	Sandbox()
+		: Application("Sandbox", Ember::ApplicationCommandLineArgs(), 1920, 1080)
 	{
 		// PushLayer(new ExampleLayer());
 		PushLayer(new Sandbox2D());

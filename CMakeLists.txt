@@ -28,6 +28,16 @@ endif()
 message(STATUS "Using C++ standard version ${CMAKE_CXX_STANDARD}")
 message(STATUS "Using C standard version ${CMAKE_C_STANDARD}")
 
+find_program(CCACHE_PROGRAM ccache)
+
+if(CCACHE_PROGRAM)
+    message(STATUS "Using ccache for compilation: ${CCACHE_PROGRAM}")
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM} CACHE STRING "Use ccache for C compiler" FORCE)
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM} CACHE STRING "Use ccache for C++ compiler" FORCE)
+else()
+    message(WARNING "ccache not found, compilation might be slower")
+endif()
+
 # Set the build type
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
@@ -75,7 +85,7 @@ endif()
 # Include subdirectories
 add_subdirectory(Ember)
 add_subdirectory(Foundry)
-add_subdirectory(Sandbox)
+# add_subdirectory(Sandbox)
 
 # Set common compile options
 function(set_common_compile_options target)
@@ -115,4 +125,4 @@ endfunction()
 
 set_common_compile_options(EmberEngine)
 set_common_compile_options(Foundry)
-set_common_compile_options(Sandbox)
+# set_common_compile_options(Sandbox)

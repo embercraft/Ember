@@ -7,3 +7,4 @@ cmake-build-release
 __pycache__
 Ember/Vendor/VulkanSDK
 .venv
+.cache

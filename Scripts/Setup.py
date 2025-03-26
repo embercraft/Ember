@@ -1,7 +1,7 @@
 #!.venv/bin/python
 
 import subprocess
-import pkg_resources
+import importlib.metadata
 
 def install(package):
     print(f"Installing {package} module...")
@@ -9,7 +9,7 @@ def install(package):
 
 def validate_package(package):
     required = {package}
-    installed = {pkg.key for pkg in pkg_resources.working_set}
+    installed = {pkg.metadata['Name'].lower() for pkg in importlib.metadata.distributions()}
     missing = required - installed
 
     if missing:

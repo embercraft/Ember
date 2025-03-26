@@ -62,13 +62,13 @@ To get started with Ember Engine, follow these steps:
    - **`v`**: Enable verbose output.
    - **`c`**: Clean build by removing existing build directory before compiling.
    - **`s`**: Build shared libraries (default is static).
-   - **`g`**: Enable GPU support if available (Supports NVIDIA & AMD GPU)
+	- **`g`**: Launch with dedicated GPU if available (NVIDIA & AMD GPUs over integrated ones)
    - **`f`**: Set Sandbox as Startup Project (Default is Foundry)
 
    Example usage:
    
    ```bash
-   ./run.sh r g    # Build in Release mode with GPU support
+   ./run.sh r g		# Build in Release mode & launch with dedicated GPU
    ```
 
    For a detailed explanation of each argument and its effect on the build process, refer to the comments in `run.sh`.

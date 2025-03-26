@@ -92,10 +92,17 @@ namespace Ember {
 
 			if(m_Data.FilePath != "Default")
 			{
-				icons[0].pixels = stbi_load(m_Data.FilePath.c_str() , &icons[0].width, &icons[0].height, 0, 4);
-				EMBER_ASSERT(icons[0].pixels, "Failed to load icon!!");
-				glfwSetWindowIcon(m_Window, 1, icons);
-				stbi_image_free(icons[0].pixels);	
+				if(!std::getenv("WAYLAND_DISPLAY"))
+				{
+					icons[0].pixels = stbi_load(m_Data.FilePath.c_str() , &icons[0].width, &icons[0].height, 0, 4);
+					EMBER_ASSERT(icons[0].pixels, "Failed to load icon!!");
+					glfwSetWindowIcon(m_Window, 1, icons);
+					stbi_image_free(icons[0].pixels);
+				}
+				else
+				{
+					EMBER_CORE_ERROR("Icon not supported on Wayland display server");
+				}
 			}
 		}
 

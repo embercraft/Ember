@@ -241,6 +241,7 @@ namespace Ember
 
 		auto stats = Renderer2D::GetStats();
 		ImGui::Text("Renderer2D Stats:");
+		// ImGui::Text("Delta time: {0}ms ({1} fps)", ts.GetMilliseconds(), 1.0f / ts.GetSeconds());
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 		ImGui::Text("Quads: %d", stats.QuadCount);
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
@@ -271,7 +272,7 @@ namespace Ember
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
 				const char* path = (const char*)payload->Data;
-				OpenScene(std::filesystem::path(g_AssetPath) / path);  // `path` is now safely null-terminated
+				LoadScene(std::filesystem::path(g_AssetPath) / path);  // `path` is now safely null-terminated
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -450,7 +451,7 @@ namespace Ember
 		return false;
 	}
 
-    void EditorLayer::NewScene()
+	void EditorLayer::NewScene()
 	{
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
@@ -462,18 +463,37 @@ namespace Ember
 		std::optional<std::string> filePath = FileDialog::OpenFile("Ember Scene | *.ember");
 		if(filePath)
 		{
-			OpenScene(*filePath);	
+			FlushAndLoadScene(*filePath);
 		}
 	}
 
-    void EditorLayer::OpenScene(const std::filesystem::path &filePath)
-    {
+	void EditorLayer::LoadScene(const std::filesystem::path &filePath)
+	{
 		std::string path = filePath;
 		if(path.substr(path.length() - 6) == ".ember")
 		{
-			m_ActiveScene = CreateRef<Scene>();
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(path);
+		}
+		else
+		{
+			std::string fileName = filePath;
+			std::size_t lastSlash = fileName.find_last_of("/");
+			if (lastSlash != std::string::npos)
+			{
+				fileName = fileName.substr(lastSlash + 1);
+			}
+
+			EMBER_ERROR("Failed to open scene file: {0}, Only .ember files can be loaded.", fileName);
+		}
+	}
+
+	void EditorLayer::FlushAndLoadScene(const std::filesystem::path &filePath)
+	{
+		std::string path = filePath;
+		if(path.substr(path.length() - 6) == ".ember")
+		{
+			NewScene();
 
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Deserialize(path);
@@ -487,11 +507,9 @@ namespace Ember
 				fileName = fileName.substr(lastSlash + 1);
 			}
 
-			// NewScene();
-
 			EMBER_ERROR("Failed to open scene file: {0}, Only .ember files can be loaded.", fileName);
 		}
-    }
+	}
 
     void EditorLayer::SaveSceneAs()
 	{
