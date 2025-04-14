@@ -5,6 +5,12 @@
 
 #include <atomic>
 #include <thread>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <cstring>
+#include <cerrno>
+#include <unistd.h>
 
 namespace Ember
 {
@@ -13,23 +19,31 @@ namespace Ember
 	{
 	public:
 		Server();
-		~Server() = default;
+		~Server();
 
-		// Start the server on a specific port.
 		void Start(uint16_t port);
-		// Stop the server by joining the provided thread.
-		void Stop(std::thread &serverThread);
+		void Stop();
 		bool IsRunning() const;
 		void SetRunning(bool running) { m_Running = running; }
 		uint16_t GetPort() const { return m_Port; }
 
-		// Set the Listener instance.
 		void SetListener(Listener *listener) { m_Listener = listener; }
 
 	private:
 		uint16_t m_Port;
-		Listener *m_Listener = nullptr;
+		Listener *m_Listener;
 		std::atomic<bool> m_Running;
+		int m_ServerFd;
+		int m_SignalFd[2];
 	};
 
+	class EMBER_API ServerFactory
+	{
+	public:
+		static void CreateAndStartServer(std::thread &serverThread, Ref<Server> &server,
+										 const std::string &listenerType, const std::string &contextKey,
+										 ListenerContext *contextObject, uint16_t port = 8080);
+
+		static void StopServer(Ref<Server> &server, std::thread &serverThread);
+	};
 }

@@ -6,6 +6,8 @@
 #include <cstring>
 #include <string>
 #include <iostream>
+#include <unordered_map>
+#include <functional>
 
 namespace Ember
 {
@@ -13,7 +15,7 @@ namespace Ember
 	class CustomListener : public Listener
 	{
 	public:
-		virtual void HandleClient(int client_socket) override
+		void HandleClient(int client_socket) override
 		{
 			char buffer[1024] = {0};
 			ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
@@ -24,33 +26,50 @@ namespace Ember
 				close(client_socket);
 				return;
 			}
+
 			buffer[bytes_received] = '\0';
 			std::string command(buffer);
 
+			// Trim whitespace
 			command.erase(0, command.find_first_not_of(" \t\n\r"));
 			command.erase(command.find_last_not_of(" \t\n\r") + 1);
 
-			if (command == "flush")
+			auto *editorLayer = dynamic_cast<EditorLayer *>(GetContext("EditorLayer"));
+			if (!editorLayer)
 			{
-				EMBER_INFO("Flushing the scene...");
-				m_EditorLayer->NewScene();
+				EMBER_ERROR("EditorLayer context not set!");
+				close(client_socket);
+				return;
 			}
-			else if (command.rfind("load ", 0) == 0)
+
+			// Define command handlers
+			static const std::unordered_map<std::string, std::function<void(EditorLayer *, const std::string &)>> commandHandlers = {
+				{"flush", [](EditorLayer *layer, const std::string &) {
+						EMBER_INFO("Flushing the scene...");
+						layer->NewScene();
+					}},
+				{"load", [](EditorLayer *layer, const std::string &arg) {
+						EMBER_INFO("Loading scene: {0}", arg);
+						layer->LoadScene(arg);
+					}},
+				{"fload", [](EditorLayer *layer, const std::string &arg) {
+						EMBER_INFO("Flushing current scene & Loading scene: {0}", arg);
+						layer->FlushAndLoadScene(arg);
+					}},
+				{"log", [](EditorLayer *, const std::string &arg) {
+						EMBER_INFO("Logging message: {0}", arg);
+					}}
+			};
+
+			// Process command
+			size_t spacePos = command.find(' ');
+			std::string commandName = (spacePos == std::string::npos) ? command : command.substr(0, spacePos);
+			std::string commandArg = (spacePos == std::string::npos) ? "" : command.substr(spacePos + 1);
+
+			auto it = commandHandlers.find(commandName);
+			if (it != commandHandlers.end())
 			{
-				std::string scene = command.substr(5);
-				EMBER_INFO("Loading scene: {0}", scene);
-				m_EditorLayer->LoadScene(scene);
-			}
-			else if (command.rfind("fload ", 0) == 0)
-			{
-				std::string scene = command.substr(6);
-				EMBER_INFO("Flushing current scene & Loading scene: {0}", scene);
-				m_EditorLayer->FlushAndLoadScene(scene);
-			}
-			else if (command.rfind("log ", 0) == 0)
-			{
-				std::string message = command.substr(4);
-				EMBER_INFO("Logging message: {0}", message);
+				it->second(editorLayer, commandArg);
 			}
 			else
 			{
@@ -60,18 +79,22 @@ namespace Ember
 			close(client_socket);
 		}
 
-		void SetContext(Layer* context) override
+		void SetContext(const std::string &key, ListenerContext *context) override
 		{
-			m_EditorLayer = dynamic_cast<EditorLayer*>(context);
+			m_Contexts[key] = context;
+		}
+
+		ListenerContext *GetContext(const std::string &key) const override
+		{
+			auto it = m_Contexts.find(key);
+			return (it != m_Contexts.end()) ? it->second : nullptr;
 		}
 
 	private:
-		EditorLayer *m_EditorLayer;
+		std::unordered_map<std::string, ListenerContext *> m_Contexts;
 	};
 
-}
+	// Register the CustomListener type with the ListenerFactory
+	REGISTER_LISTENER_TYPE(CustomListener);
 
-Ember::Listener *Ember::CreateListener()
-{
-	return new CustomListener();
 }

@@ -12,35 +12,21 @@ namespace Ember
 	public:
 		Foundry()
 			: Application("Foundry", ApplicationCommandLineArgs(), 1920, 1080, "Resources/Icons/Logo/Foundry.png"),
-			server(CreateScope<Server>())
+			server(CreateRef<Server>())
 		{
 			EditorLayer* editorLayer = new EditorLayer();
-			serverStart(*editorLayer);
+			ServerFactory::CreateAndStartServer(serverThread, server, "CustomListener", "EditorLayer", editorLayer, 8080);
 			PushLayer(editorLayer);
 		}
 
 		~Foundry()
 		{
-			serverStop();
+			ServerFactory::StopServer(server, serverThread);
 		}
 
 	private:
-		void serverStart(EditorLayer& editorLayer)
-		{
-			serverThread = std::thread([this, &editorLayer]() {
-				auto listener = CreateListener();
-				listener->SetContext(&editorLayer);
-				server->SetListener(listener);
-				server->Start(8080);
-			});
-		}
 
-		void serverStop()
-		{
-			server->Stop(serverThread);
-		}
-
-		Scope<Server> server;
+		Ref<Server> server;
 		std::thread serverThread;
 	};
 

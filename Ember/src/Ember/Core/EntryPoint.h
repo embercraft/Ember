@@ -9,7 +9,6 @@
 #include <thread>
 
 extern Ember::Application* Ember::CreateApplication(ApplicationCommandLineArgs args);
-extern Ember::Listener *Ember::CreateListener();
 
 int main(int argc, char** argv)
 {

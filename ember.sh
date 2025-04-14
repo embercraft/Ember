@@ -44,8 +44,29 @@ EOF
             cd "$SCRIPT_DIR/Foundry" || { echo "Error: Unable to change directory"; return 1; }
             ../build/Debug-Static/Foundry/Foundry
             ;;
+        load | fload)
+            if [ -z "$2" ]; then
+                echo "Error: No scene file specified."
+                return 1
+            fi
+
+            # Convert the provided path to an absolute path
+            ABS_PATH="$(realpath "$2")"
+
+            if [ ! -f "$ABS_PATH" ]; then
+                echo "Error: Scene file '$ABS_PATH' not found."
+                return 1
+            fi
+
+            if [ "$1" = "fload" ]; then
+                echo "flush" | nc localhost 8080
+            fi
+
+            echo "load $ABS_PATH" | nc localhost 8080
+            ;;
         *)
-			echo $* | nc localhost 8080
+            # Send everything else as-is
+            echo "$*" | nc localhost 8080
             ;;
     esac
 }
@@ -72,8 +93,8 @@ _ember_autocomplete() {
                 # Append "/" to directories
                 COMPREPLY+=("$f/")
             else
-                # Add regular files without modification
-                COMPREPLY+=("$f")
+                # Convert to absolute path before adding to completion
+                COMPREPLY+=("$(realpath "$f")")
             fi
         done
 

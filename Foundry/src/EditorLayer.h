@@ -4,29 +4,30 @@
 #include "Panels/ScenehierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Ember/Renderer/EditorCamera.h"
+#include "Ember/Server/Listener.h"
 
 #include <filesystem>
 
 namespace Ember
 {
 
-	class EditorLayer : public Layer
+	class EditorLayer : public Layer, public ListenerContext
 	{
 	public:
 		EditorLayer();
 		virtual ~EditorLayer() = default;
 
-		virtual void OnAttach() override;
-		virtual void OnDetach() override;
+		void OnAttach() override;
+		void OnDetach() override;
 		void OnUpdate(Timestep ts) override;
 		void OnEvent(Event &e) override;
-		virtual void OnImGuiRender() override;
+		void OnImGuiRender() override;
 
 		void NewScene();
 		void LoadScene(const std::filesystem::path &filePath);
 		void FlushAndLoadScene(const std::filesystem::path &filePath);
-		
-		private:
+
+	private:
 		void OpenScene();
 		void SaveSceneAs();
 		bool OnKeyPressed(KeyPressedEvent &e);
@@ -53,7 +54,8 @@ namespace Ember
 
 		EditorCamera m_EditorCamera;
 
-		bool m_ViewportFocused = false, m_ViewportHovered = false;
+		bool m_ViewportFocused = false;
+		bool m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
 		glm::vec2 m_ViewportBounds[2];
 
