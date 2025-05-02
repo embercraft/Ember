@@ -82,11 +82,6 @@ else()
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}-Static/)
 endif()
 
-# Include subdirectories
-add_subdirectory(Ember)
-add_subdirectory(Foundry)
-# add_subdirectory(Sandbox)
-
 # Set common compile options
 function(set_common_compile_options target)
     target_compile_options(${target} PRIVATE
@@ -123,6 +118,15 @@ function(set_common_compile_options target)
     )
 endfunction()
 
-set_common_compile_options(EmberEngine)
-set_common_compile_options(Foundry)
-# set_common_compile_options(Sandbox)
+
+if (COMPILE_ENGINE)
+	message(STATUS "Compiling Ember Engine")
+	add_subdirectory(Ember)
+	set_common_compile_options(EmberEngine)
+endif()
+
+if (COMPILE_FOUNDARY)
+	message(STATUS "Compiling Foundry")
+	add_subdirectory(Foundry)
+	set_common_compile_options(Foundry)
+endif()
