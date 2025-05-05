@@ -39,13 +39,8 @@ namespace Ember
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 		m_ActiveScene = CreateRef<Scene>();
-		m_ActiveScene->SetName("Untitled Scene");
-
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
-		m_ActiveSceneFilepath = std::filesystem::path();
 	}
 
 	void EditorLayer::OnDetach()
@@ -193,7 +188,7 @@ namespace Ember
 
 				if(ImGui::MenuItem("Save", "Ctrl+S"))
 				{
-					Save();
+					SaveScene();
 				}
 
 				if(ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
@@ -434,15 +429,22 @@ namespace Ember
 
 			case Key::S:
 			{
-				if(control)
+				if (control)
 				{
-					Save();
+					if (shift)
+						SaveSceneAs();
+					else
+						SaveScene();
 				}
+				break;
+			}
+			
+			// Scene Commands
+			case Key::D:
+			{
+				if (control)
+					OnDuplicateEntity();
 
-				if(control && shift)
-				{
-					SaveSceneAs();
-				}
 				break;
 			}
 
@@ -516,6 +518,8 @@ namespace Ember
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+		m_EditorScenePath = std::filesystem::path();
 	}
 
 	void EditorLayer::OpenScene()
@@ -527,8 +531,13 @@ namespace Ember
 		}
 	}
 
-    void EditorLayer::OpenScene(const std::filesystem::path &filePath)
-    {
+	void EditorLayer::OpenScene(const std::filesystem::path &filePath)
+	{
+		if(m_SceneState != SceneState::Edit)
+		{
+			OnSceneEdit();
+		}
+
 		if (filePath.extension().string() != ".ember")
 		{
 			EMBER_WARN("Could not load {0} - not a scene file", filePath.filename().string());
@@ -539,24 +548,25 @@ namespace Ember
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(filePath.string()))
 		{
-			m_ActiveScene = newScene;
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			m_EditorScene = newScene;
+			m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneHierarchyPanel.SetContext(m_EditorScene);
+			m_ActiveScene = m_EditorScene;
+			m_EditorScenePath = filePath;
 		}
-		
-		m_ActiveSceneFilepath = filePath;
     }
 
-	void EditorLayer::Save()
+	void EditorLayer::SaveScene()
 	{
-		if(m_ActiveSceneFilepath == std::filesystem::path())
+		if (!m_EditorScenePath.empty())
 		{
-			SaveSceneAs();
+			SerializeScene(m_ActiveScene, m_EditorScenePath);
+
+			EMBER_CORE_INFO("Saved scene to {0}", m_EditorScenePath.string());
 		}
 		else
 		{
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(m_ActiveSceneFilepath);
+			SaveSceneAs();
 		}
 	}
 
@@ -573,32 +583,56 @@ namespace Ember
 				path += ".ember";
 			}
 
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(path);
+			SerializeScene(m_ActiveScene, path);
+			m_EditorScenePath = path;
 		}
+	}
+
+	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
+	{
+		SceneSerializer serializer(scene);
+		serializer.Serialize(path.string());
+	}
+
+	void EditorLayer::OnDuplicateEntity()
+	{
+		if (m_SceneState != SceneState::Edit)
+			return;
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity)
+			m_EditorScene->DuplicateEntity(selectedEntity);
 	}
 
 	void EditorLayer::OnSceneEdit()
 	{
-		m_ActiveScene->OnRuntimeStop();
 		m_SceneState = SceneState::Edit;
+		m_ActiveScene->OnRuntimeStop();
+		m_ActiveScene = m_EditorScene;
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnScenePlay()
 	{
-		m_ActiveScene->OnRuntimeStart();
 		m_SceneState = SceneState::Play;
+		m_ActiveScene = Scene::Copy(m_EditorScene);
+		m_ActiveScene->OnRuntimeStart();
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnScenePause()
 	{
+	}
+
+	void EditorLayer::OnSceneStop()
+	{
+		m_SceneState = SceneState::Stop;
 		m_ActiveScene->OnRuntimePause();
-		m_SceneState = SceneState::Play;
+		m_ActiveScene = m_EditorScene;
 	}
 	
 	void EditorLayer::OnSceneSimulate()
 	{
+		m_SceneState = SceneState::Simulate;
 		m_ActiveScene->OnRuntimeStart();
-		m_SceneState = SceneState::Play;
 	}
 }

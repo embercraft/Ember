@@ -26,59 +26,29 @@ namespace Ember
 
 		auto view = m_Context->m_Registry.view<entt::entity>();
 
+		if(m_Context)
+		{	
+			view.each([&](auto entityID) {
+				Entity entity{ entityID, m_Context.get() };
+				DrawEntityNode(entity);
+			});
+			ImGui::Separator();
 
-		bool renameScene = false;
-		std::string newSceneName = m_Context->GetName(); // Store the initial scene name in a temporary variable
-
-		if (renameScene)
-		{
-			// Show the input box when renaming is active
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strncpy(buffer, newSceneName.c_str(), sizeof(buffer) - 1);
-			if (ImGui::InputText("##RenameScene", buffer, sizeof(buffer), ImGuiInputTextFlags_AutoSelectAll))
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			{
-				newSceneName = buffer;
+				m_SelectionContext = {};
 			}
 
-			// Optionally, detect when the user presses Enter to confirm the rename
-			if (ImGui::IsItemDeactivatedAfterEdit() || ImGui::IsKeyPressed(ImGuiKey_Enter))
+			// Right-click on blank space
+			if(ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 			{
-				m_Context->SetName(newSceneName); // Commit the new name
-				renameScene = false; // Hide the input box after renaming
+				if (ImGui::MenuItem("Create an Entity"))
+				{
+					m_Context->CreateEntity("New Entity");
+				}
+
+				ImGui::EndPopup();
 			}
-		}
-		else
-		{
-			// Make the "Scene: <scene name>" text clickable
-			if (ImGui::Selectable(("Scene: " + m_Context->GetName()).c_str()))
-			{
-				renameScene = true; // Switch to rename mode when clicked
-				newSceneName = m_Context->GetName(); // Initialize with the current scene name
-			}
-		}
-
-
-		view.each([&](auto entityID) {
-			Entity entity{ entityID, m_Context.get() };
-			DrawEntityNode(entity);
-		});
-		ImGui::Separator();
-
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-		{
-			m_SelectionContext = {};
-		}
-
-		// Right-click on blank space
-		if(ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
-		{
-			if (ImGui::MenuItem("Create an Entity"))
-			{
-				m_Context->CreateEntity("New Entity");
-			}
-
-			ImGui::EndPopup();
 		}
 
 		ImGui::End();
@@ -467,7 +437,7 @@ namespace Ember
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
 		{
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
-			ImGui::DragFloat2("Size", glm::value_ptr(component.Offset));
+			ImGui::DragFloat2("Size", glm::value_ptr(component.Size));
 			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
